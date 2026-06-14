@@ -1,0 +1,142 @@
+
+<h2 class="sr-only">WM 2026 Prognose: Deutschland vs. Curaçao – Siegwahrscheinlichkeiten und Statistiken</h2>
+
+<style>
+.match-header{display:flex;align-items:center;justify-content:center;gap:16px;padding:1.5rem 0 0.5rem;flex-wrap:wrap}
+.team-block{display:flex;flex-direction:column;align-items:center;gap:6px}
+.team-flag{width:52px;height:34px;border-radius:4px;border:0.5px solid var(--color-border-tertiary);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:28px}
+.team-name{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.vs-badge{font-size:12px;color:var(--color-text-secondary);padding:4px 10px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);margin-top:2px}
+.meta{text-align:center;font-size:12px;color:var(--color-text-secondary);margin-bottom:1.5rem}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:1.5rem 0}
+.stat-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:0.85rem 1rem}
+.stat-label{font-size:11px;color:var(--color-text-secondary);margin-bottom:4px}
+.stat-value{font-size:22px;font-weight:500;color:var(--color-text-primary)}
+.stat-sub{font-size:11px;color:var(--color-text-tertiary);margin-top:2px}
+.chart-wrap{position:relative;width:100%;height:220px;margin:1rem 0 0.5rem}
+.legend{display:flex;justify-content:center;gap:20px;margin-bottom:1.5rem;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--color-text-secondary)}
+.legend-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.bar-section{margin:1rem 0 1.5rem}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.bar-label{font-size:12px;color:var(--color-text-secondary);width:130px;flex-shrink:0;text-align:right}
+.bar-track{flex:1;height:18px;background:var(--color-background-secondary);border-radius:9px;overflow:hidden}
+.bar-fill{height:100%;border-radius:9px;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-size:11px;font-weight:500;transition:width 0.6s ease}
+.section-title{font-size:12px;font-weight:500;color:var(--color-text-secondary);margin:1.5rem 0 0.75rem;text-transform:uppercase;letter-spacing:0.06em}
+.divider{border:none;border-top:0.5px solid var(--color-border-tertiary);margin:0}
+</style>
+
+<div class="match-header">
+  <div class="team-block">
+    <div class="team-flag">🇩🇪</div>
+    <span class="team-name">Deutschland</span>
+  </div>
+  <div>
+    <div class="vs-badge">Gruppe E · WM 2026</div>
+  </div>
+  <div class="team-block">
+    <div class="team-flag">🇨🇼</div>
+    <span class="team-name">Curaçao</span>
+  </div>
+</div>
+<p class="meta">NRG Stadium, Houston · So. 14. Juni 2026 · 19:00 MESZ</p>
+
+<hr class="divider">
+
+<p class="section-title">Spielausgang-Wahrscheinlichkeit</p>
+
+<div class="chart-wrap">
+  <canvas id="donut" role="img" aria-label="Tortendiagramm Siegwahrscheinlichkeit: Deutschland 80%, Unentschieden 5%, Curaçao 15%">Deutschland 80%, Unentschieden 5%, Curaçao 15%.</canvas>
+</div>
+<div class="legend">
+  <span class="legend-item"><span class="legend-dot" style="background:#185FA5"></span>Deutschland – 80%</span>
+  <span class="legend-item"><span class="legend-dot" style="background:#888780"></span>Unentschieden – 5%</span>
+  <span class="legend-item"><span class="legend-dot" style="background:#D85A30"></span>Curaçao – 15%</span>
+</div>
+
+<hr class="divider">
+<p class="section-title">Weitere Kennzahlen</p>
+
+<div class="bar-section">
+  <div class="bar-row">
+    <span class="bar-label">Über 2,5 Tore</span>
+    <div class="bar-track">
+      <div class="bar-fill" style="width:68%;background:#185FA5;color:#E6F1FB">68%</div>
+    </div>
+  </div>
+  <div class="bar-row">
+    <span class="bar-label">Über 4,5 Tore</span>
+    <div class="bar-track">
+      <div class="bar-fill" style="width:42%;background:#378ADD;color:#E6F1FB">~42%</div>
+    </div>
+  </div>
+  <div class="bar-row">
+    <span class="bar-label">Beide Teams treffen</span>
+    <div class="bar-track">
+      <div class="bar-fill" style="width:38%;background:#0F6E56;color:#E1F5EE">~38%</div>
+    </div>
+  </div>
+  <div class="bar-row">
+    <span class="bar-label">Curaçao ohne Tor</span>
+    <div class="bar-track">
+      <div class="bar-fill" style="width:62%;background:#888780;color:#F1EFE8">~62%</div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+<p class="section-title">Statistische Hintergründe</p>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-label">Ø Tore/Spiel (DE, 2026)</div>
+    <div class="stat-value">3,0</div>
+    <div class="stat-sub">Letzte 4 Spiele</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">xG-Modell (DE Sieg)</div>
+    <div class="stat-value">92%</div>
+    <div class="stat-sub">Modellbasiert</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Beste Quote DE Sieg</div>
+    <div class="stat-value">1,02</div>
+    <div class="stat-sub">~98% implied</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Curaçao zuletzt</div>
+    <div class="stat-value">4:0</div>
+    <div class="stat-sub">vs. Aruba (Freundschaft)</div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const isDark = matchMedia('(prefers-color-scheme: dark)').matches;
+new Chart(document.getElementById('donut'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Deutschland', 'Unentschieden', 'Curaçao'],
+    datasets: [{
+      data: [80, 5, 15],
+      backgroundColor: ['#185FA5', '#888780', '#D85A30'],
+      borderColor: isDark ? '#1a1a1a' : '#ffffff',
+      borderWidth: 3,
+      hoverOffset: 6
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '68%',
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: (ctx) => ' ' + ctx.label + ': ' + ctx.parsed + '%'
+        }
+      }
+    }
+  }
+});
+</script>
