@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<!-- ============================================================
+     BURGERMEISTER DESIGN — Portfolio (One-Page, statisch)
+     ------------------------------------------------------------
+     Aufbau dieser Datei:
+       1. <head>  : SEO, Meta, Fonts, Theme-Init
+       2. <style> : Alle Styles (über CSS-Variablen anpassbar)
+       3. <body>  : Inhalt (Hero, Über mich, Projekte, ...)
+       4. <script>: Animationen, Dark-Mode, Menü, Formular
+
+     Schnell anpassen:
+       • Akzentfarbe ........ --accent  (siehe :root unten)
+       • Logo ............... <symbol id="bd-mark"> (SVG, austauschbar)
+       • E-Mail ............. überall "kontakt@burgermeister-design.de"
+       • Projekte ........... Abschnitt "PROJEKTE" (Platzhalter)
+       • MakerWorld/Instagram im Footer + in den Projektkarten
+     ============================================================ -->
+
+<title>Burgermeister Design — Technischer Produktdesign &amp; 3D-Druck</title>
+<meta name="description" content="Burgermeister Design — Louis Burgermeister entwirft präzise Bauteile in CAD und fertigt sie im 3D-Druck. Modelle auf MakerWorld, Auftragsdrucke nach Maß. Perfektion in jeder Dimension.">
+<meta name="author" content="Louis Burgermeister">
+<meta name="theme-color" content="#0c0d0f">
+
+<!-- Open Graph / Social (Bild später unter og-image.png hinterlegen) -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Burgermeister Design — Technischer Produktdesign & 3D-Druck">
+<meta property="og:description" content="CAD-Konstruktion und 3D-Druck nach Maß. Perfektion in jeder Dimension.">
+<meta property="og:locale" content="de_DE">
+<meta property="og:url" content="https://burgermeister-design.de/">
+
+<!-- Favicon: kleines BD-Monogramm als Inline-SVG (kein extra Request) -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='6' y='6' width='88' height='88' rx='10' fill='%230e0e10'/%3E%3Ctext x='50' y='53' text-anchor='middle' dominant-baseline='central' font-family='sans-serif' font-weight='700' font-size='44' fill='%23fff'%3EBD%3C/text%3E%3Ccircle cx='77' cy='77' r='6' fill='%23ff5a1f'/%3E%3C/svg%3E">
+
+<!-- Schriften: Space Grotesk (Display) · Inter (Text) · JetBrains Mono (Labels)
+     Fallbacks auf System-Fonts, falls das CDN mal nicht lädt. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+<!-- Theme-Init VOR dem Rendern: verhindert kurzes Aufblitzen des falschen Modus.
+     Liest gespeicherte Wahl, sonst System-Einstellung. localStorage abgesichert. -->
+<script>
+  (function () {
+    document.documentElement.classList.add('js'); // markiert "JS aktiv" (für Reveal-Animationen)
+    var theme = 'light';
+    try {
+      var saved = localStorage.getItem('bd-theme');
+      theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    } catch (e) { /* localStorage blockiert -> Standard hell */ }
+    document.documentElement.setAttribute('data-theme', theme);
+  })();
+</script>
+
+<style>
+/* ============================================================
+   1) DESIGN-TOKENS  —  hier zentral anpassen
+   ============================================================ */
+:root {
+  /* ---- DIE EINE Akzentfarbe (alles hängt daran) ----
+     Alternativen, falls du es kühler/technischer magst:
+       Technik-Blau:  #2d7dd2     Cyan:  #00a6fb     Signal-Grün: #25c26e */
+  --accent: #ff5a1f;
+  --accent-ink: #0e0e10;          /* Textfarbe AUF der Akzentfläche (Kontrast) */
+
+  /* ---- Monochrome Basis (heller Modus) ---- */
+  --bg:       #f6f6f7;            /* Seitenhintergrund (wie eine Zeichenfläche) */
+  --surface:  #ffffff;            /* Karten / Flächen */
+  --ink:      #0e0e10;            /* Haupttext */
+  --muted:    #6b6b72;            /* Nebentext */
+  --line:     #e3e3e7;            /* Linien / Rahmen */
+  --grid:     rgba(15,15,20,.045);/* feines Hintergrundraster */
+  --grid-major: rgba(15,15,20,.06);
+
+  /* ---- Maße & Typo ---- */
+  --hh: 64px;                     /* Höhe der Kopfzeile (für Anker-Offsets) */
+  --maxw: 1140px;                 /* maximale Inhaltsbreite */
+  --radius: 14px;
+  --pad: clamp(20px, 5vw, 40px);
+
+  --font-display: 'Space Grotesk', 'Segoe UI', system-ui, sans-serif;
+  --font-body:    'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono:    'JetBrains Mono', ui-monospace, 'SF Mono', 'Cascadia Code', Consolas, monospace;
+}
+
+/* ---- Dunkler Modus: nur Farbwerte überschreiben ---- */
+[data-theme="dark"] {
+  --bg:       #0c0d0f;
+  --surface:  #15161a;
+  --ink:      #f3f3f5;
+  --muted:    #9a9aa3;
+  --line:     #26272d;
+  --grid:     rgba(255,255,255,.05);
+  --grid-major: rgba(255,255,255,.07);
+}
+
+/* ============================================================
+   2) RESET & BASIS
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+body {
+  position: relative;                 /* Bezugspunkt für die Scroll-Animationsebene */
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.65;
+  letter-spacing: .002em;
+  overflow-x: hidden;                 /* keine seitliche Scrollleiste durch die Welle */
+  -webkit-font-smoothing: antialiased;
+  transition: background-color .35s ease, color .35s ease;
+}
+
+/* Feines Raster als ruhiger "CAD-Canvas"-Hintergrund (fix, bewegt sich nicht mit) */
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+    linear-gradient(var(--grid-major) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-major) 1px, transparent 1px);
+  background-size: 32px 32px, 32px 32px, 160px 160px, 160px 160px;
+  transition: background-image .35s ease;
+}
+
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; cursor: pointer; }
+
+/* Tastatur-Fokus immer deutlich sichtbar (Barrierefreiheit) */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Inhalt liegt über Raster + Animationsebene */
+.shell { position: relative; z-index: 1; }
+
+.container {
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-inline: var(--pad);
+}
+
+/* ---- Typo-Skala ---- */
+h1, h2, h3 { font-family: var(--font-display); font-weight: 700; line-height: 1.05; letter-spacing: -.02em; }
+
+/* Monospace-"Bemaßungslabel" (Eyebrow über jedem Abschnitt) */
+.label {
+  font-family: var(--font-mono);
+  font-size: .72rem;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  gap: .6em;
+}
+.label::before {                 /* kleiner Akzent-Tick wie ein Maßpfeil-Anfang */
+  content: "";
+  width: 22px; height: 1px;
+  background: var(--accent);
+}
+
+/* ============================================================
+   3) KOPFZEILE / NAVIGATION
+   ============================================================ */
+.site-header {
+  position: sticky; top: 0;
+  z-index: 50;
+  height: var(--hh);
+  display: flex; align-items: center;
+  padding-top: env(safe-area-inset-top);    /* iPhone-Notch */
+  background: color-mix(in srgb, var(--bg) 80%, transparent);
+  -webkit-backdrop-filter: saturate(1.2) blur(10px);  /* Safari/iPhone */
+  backdrop-filter: saturate(1.2) blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+.site-header .container { display: flex; align-items: center; justify-content: space-between; }
+
+.brand { display: flex; align-items: center; gap: .6rem; }
+.brand .mark { width: 30px; height: 30px; color: var(--ink); }
+.brand .name {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 1.02rem; letter-spacing: -.01em;
+}
+
+.nav { display: flex; align-items: center; gap: .35rem; }
+.nav a {
+  font-family: var(--font-mono);
+  font-size: .8rem; letter-spacing: .04em;
+  color: var(--muted);
+  padding: .5rem .7rem; border-radius: 8px;
+  transition: color .2s, background-color .2s;
+}
+.nav a:hover { color: var(--ink); background: color-mix(in srgb, var(--ink) 6%, transparent); }
+
+/* Icon-Buttons (Theme-Umschalter + Menü) */
+.icon-btn {
+  width: 40px; height: 40px;
+  display: grid; place-items: center;
+  background: transparent; color: var(--ink);
+  border: 1px solid var(--line); border-radius: 10px;
+  transition: border-color .2s, background-color .2s, color .2s;
+}
+.icon-btn:hover { border-color: var(--accent); color: var(--accent); }
+.icon-btn svg { width: 18px; height: 18px; }
+
+/* Sonne/Mond je nach Modus zeigen */
+.icon-btn .i-sun  { display: none; }
+.icon-btn .i-moon { display: block; }
+[data-theme="dark"] .icon-btn .i-sun  { display: block; }
+[data-theme="dark"] .icon-btn .i-moon { display: none; }
+
+.menu-btn { display: inline-grid; }       /* mobil sichtbar */
+.menu-btn .bar { width: 18px; height: 2px; background: currentColor; display: block; margin: 2px 0; transition: transform .25s, opacity .25s; }
+body.nav-open .menu-btn .bar:nth-child(1) { transform: translateY(4px) rotate(45deg); }
+body.nav-open .menu-btn .bar:nth-child(2) { opacity: 0; }
+body.nav-open .menu-btn .bar:nth-child(3) { transform: translateY(-4px) rotate(-45deg); }
+
+.header-tools { display: flex; align-items: center; gap: .5rem; }
+
+/* Mobiles Menü: standardmäßig eingeklappt (Mobile-First) */
+.nav {
+  position: fixed; inset: var(--hh) 0 auto 0;
+  flex-direction: column; align-items: stretch; gap: .15rem;
+  padding: 1rem var(--pad) 1.4rem;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+  transform: translateY(-120%);
+  transition: transform .32s cubic-bezier(.2,.7,.2,1);
+  visibility: hidden;
+}
+body.nav-open .nav { transform: translateY(0); visibility: visible; }
+.nav a { padding: .8rem .4rem; font-size: .9rem; }
+
+/* ============================================================
+   4) ABSCHNITTE & BUTTONS (gemeinsam)
+   ============================================================ */
+section { scroll-margin-top: calc(var(--hh) + 12px); }
+
+.section { padding-block: clamp(72px, 12vw, 132px); }
+.section-head { margin-bottom: clamp(28px, 5vw, 52px); }
+.section-head h2 {
+  font-size: clamp(1.9rem, 6vw, 3.1rem);
+  margin-top: .7rem; max-width: 16ch;
+}
+.section-head .lead {
+  color: var(--muted); max-width: 56ch; margin-top: 1rem; font-size: 1.06rem;
+}
+
+.btn {
+  display: inline-flex; align-items: center; gap: .55rem;
+  font-family: var(--font-mono); font-size: .82rem; letter-spacing: .05em;
+  padding: .85rem 1.25rem; border-radius: 11px;
+  border: 1px solid transparent;
+  transition: transform .2s, background-color .2s, border-color .2s, color .2s, box-shadow .2s;
+  min-height: 46px;                 /* gut tippbar auf dem iPhone */
+}
+.btn .arr { transition: transform .25s; }
+.btn:hover .arr { transform: translateX(3px); }
+
+.btn-primary { background: var(--accent); color: var(--accent-ink); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 24px -10px color-mix(in srgb, var(--accent) 70%, transparent); filter: brightness(1.04); }
+
+.btn-ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+.btn-ghost:hover { transform: translateY(-2px); border-color: var(--accent); color: var(--accent); }
+
+/* ============================================================
+   5) HERO
+   ============================================================ */
+.hero {
+  min-height: calc(100vh - var(--hh));   /* Fallback für ältere Browser */
+  min-height: calc(100svh - var(--hh));  /* moderne mobile Viewport-Einheit */
+  display: flex; flex-direction: column; justify-content: center;
+  padding-block: clamp(48px, 9vw, 96px);
+}
+.hero .corner-id {                /* kleine Sheet-Notiz oben links */
+  font-family: var(--font-mono); font-size: .72rem; letter-spacing: .18em;
+  color: var(--muted); margin-bottom: clamp(28px, 8vw, 56px);
+}
+.hero h1 {
+  font-size: clamp(2.7rem, 12vw, 6.2rem);
+  letter-spacing: -.035em; line-height: .96;
+}
+.hero h1 .line2 { color: var(--muted); }   /* "Design" dezent abgesetzt */
+
+.hero .slogan {
+  font-family: var(--font-display); font-weight: 500;
+  font-size: clamp(1.15rem, 4.4vw, 1.9rem);
+  margin-top: 1.1rem; letter-spacing: -.01em;
+}
+.hero .slogan b { color: var(--accent); font-weight: 700; }
+
+.hero .intro { color: var(--muted); max-width: 50ch; margin-top: 1.4rem; }
+
+.hero-actions { display: flex; flex-wrap: wrap; gap: .8rem; margin-top: 2rem; }
+
+/* Bemaßungslinie unter dem Hero — wie in einer technischen Zeichnung */
+.dim {
+  display: flex; align-items: center; gap: .8rem;
+  margin-top: clamp(40px, 8vw, 72px);
+  color: var(--muted);
+  font-family: var(--font-mono); font-size: .72rem; letter-spacing: .12em;
+}
+.dim .rule {
+  position: relative; flex: 1; height: 1px; background: var(--line); max-width: 360px;
+}
+.dim .rule::before, .dim .rule::after {   /* Maßpfeile an den Enden */
+  content: ""; position: absolute; top: 50%; width: 7px; height: 7px;
+  border-top: 1px solid var(--accent); border-right: 1px solid var(--accent);
+}
+.dim .rule::before { left: 0;  transform: translateY(-50%) rotate(-135deg); }
+.dim .rule::after  { right: 0; transform: translateY(-50%) rotate(45deg); }
+
+/* Spezifikations-Kärtchen (wer/was/wo) im Hero */
+.spec-row {
+  margin-top: clamp(36px, 7vw, 60px);
+  display: grid; gap: 1px;
+  grid-template-columns: 1fr;
+  background: var(--line);
+  border: 1px solid var(--line); border-radius: 12px; overflow: hidden;
+}
+.spec-row > div { background: var(--surface); padding: .95rem 1.1rem; }
+.spec-row dt { font-family: var(--font-mono); font-size: .68rem; letter-spacing: .12em; color: var(--muted); text-transform: uppercase; }
+.spec-row dd { font-family: var(--font-display); font-weight: 500; margin-top: .25rem; }
+
+/* ============================================================
+   6) ÜBER MICH
+   ============================================================ */
+.about-grid { display: grid; gap: clamp(32px, 6vw, 64px); }
+.about-text p + p { margin-top: 1rem; color: var(--muted); }
+.about-text p:first-child { font-size: 1.12rem; }
+
+.skills { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.skill {
+  background: var(--surface); padding: 1.05rem 1.2rem;
+  display: flex; align-items: baseline; gap: 1rem;
+  transition: background-color .2s;
+}
+.skill:hover { background: color-mix(in srgb, var(--accent) 6%, var(--surface)); }
+.skill .idx { font-family: var(--font-mono); font-size: .72rem; color: var(--accent); min-width: 2.4rem; }
+.skill .name { font-family: var(--font-display); font-weight: 500; font-size: 1.05rem; }
+.skill .desc { margin-left: auto; color: var(--muted); font-family: var(--font-mono); font-size: .74rem; letter-spacing: .03em; text-align: right; }
+
+/* ============================================================
+   7) PROJEKTE (Karten-Grid)
+   ============================================================ */
+.projects {
+  display: grid; gap: 18px;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+}
+.card {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--line); border-radius: var(--radius);
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  transition: transform .28s cubic-bezier(.2,.7,.2,1), border-color .28s, box-shadow .28s;
+}
+/* Registrier-Ecken (oben-links / unten-rechts) wie auf einem Zeichnungsblatt */
+.card::before, .card::after {
+  content: ""; position: absolute; width: 12px; height: 12px; z-index: 2;
+  opacity: 0; transition: opacity .28s;
+}
+.card::before { top: 9px; left: 9px; border-top: 1.5px solid var(--accent); border-left: 1.5px solid var(--accent); }
+.card::after  { bottom: 9px; right: 9px; border-bottom: 1.5px solid var(--accent); border-right: 1.5px solid var(--accent); }
+.card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 18px 40px -22px color-mix(in srgb, var(--ink) 60%, transparent); }
+.card:hover::before, .card:hover::after { opacity: 1; }
+
+.card .thumb {
+  aspect-ratio: 4 / 3;
+  background:
+    linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 22px 22px,
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0 / 22px 22px,
+    var(--surface);
+  border-bottom: 1px solid var(--line);
+  display: grid; place-items: center;
+  overflow: hidden;
+}
+.card .thumb svg { width: 64%; height: 64%; color: var(--ink); transition: transform .4s cubic-bezier(.2,.7,.2,1); }
+.card:hover .thumb svg { transform: scale(1.06) rotate(-1deg); }
+
+.card .body { padding: 1.1rem 1.2rem 1.25rem; display: flex; flex-direction: column; gap: .5rem; flex: 1; }
+.card .tag { font-family: var(--font-mono); font-size: .66rem; letter-spacing: .14em; color: var(--accent); text-transform: uppercase; }
+.card h3 { font-size: 1.18rem; }
+.card p { color: var(--muted); font-size: .96rem; }
+.card .link {
+  margin-top: auto; padding-top: .5rem;
+  font-family: var(--font-mono); font-size: .76rem; letter-spacing: .03em;
+  color: var(--ink); display: inline-flex; align-items: center; gap: .4rem;
+  transition: color .2s;
+}
+.card .link:hover { color: var(--accent); }
+.card .link .arr { transition: transform .25s; }
+.card .link:hover .arr { transform: translate(2px,-2px); }
+
+/* ============================================================
+   8) LEISTUNGEN (Ablauf Idee -> CAD -> Druck)
+   ============================================================ */
+.process { display: flex; flex-direction: column; gap: 14px; }
+.step {
+  position: relative; flex: 1;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 1.4rem 1.4rem 1.5rem;
+}
+.step .num {
+  font-family: var(--font-mono); font-size: .78rem; letter-spacing: .1em;
+  color: var(--accent); display: block; margin-bottom: .9rem;
+}
+.step .ico { width: 38px; height: 38px; color: var(--ink); margin-bottom: .9rem; }
+.step h3 { font-size: 1.28rem; margin-bottom: .4rem; }
+.step p { color: var(--muted); font-size: .98rem; }
+
+/* Verbindungs-Maßpfeil zwischen den Schritten (nur Desktop) */
+.conn { display: none; }
+
+/* Material-/Spec-Zeile unter dem Ablauf */
+.spec-strip {
+  margin-top: 18px;
+  display: flex; flex-wrap: wrap; gap: 10px;
+}
+.spec-strip span {
+  font-family: var(--font-mono); font-size: .72rem; letter-spacing: .08em;
+  color: var(--muted);
+  border: 1px solid var(--line); border-radius: 999px;
+  padding: .5rem .85rem; background: var(--surface);
+}
+.spec-strip b { color: var(--ink); font-weight: 500; }
+
+/* ============================================================
+   9) KONTAKT (Formular)
+   ============================================================ */
+.contact-grid { display: grid; gap: clamp(28px, 5vw, 56px); }
+.form {
+  position: relative;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: clamp(20px, 4vw, 34px);
+}
+.field { margin-bottom: 1.1rem; }
+.field label {
+  display: block; margin-bottom: .45rem;
+  font-family: var(--font-mono); font-size: .72rem; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--muted);
+}
+.field input, .field textarea {
+  width: 100%; font: inherit; font-size: 1rem;
+  background: var(--bg); color: var(--ink);
+  border: 1px solid var(--line); border-radius: 10px;
+  padding: .8rem .9rem;
+  transition: border-color .2s, box-shadow .2s;
+}
+.field input:focus, .field textarea:focus {
+  outline: none; border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+.field textarea { resize: vertical; min-height: 130px; }
+.form .btn-primary { width: 100%; justify-content: center; }
+.form-note { margin-top: .9rem; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .04em; color: var(--muted); }
+.form-status { margin-top: .9rem; font-size: .92rem; color: var(--accent); min-height: 1.2em; font-weight: 500; }
+
+.contact-aside p { color: var(--muted); }
+.contact-aside .direct {
+  margin-top: 1.4rem; display: grid; gap: 1px;
+  background: var(--line); border: 1px solid var(--line); border-radius: 12px; overflow: hidden;
+}
+.contact-aside .direct a, .contact-aside .direct div {
+  background: var(--surface); padding: .9rem 1.1rem;
+  display: flex; align-items: center; gap: .8rem;
+  font-family: var(--font-mono); font-size: .82rem;
+  transition: background-color .2s, color .2s;
+}
+.contact-aside .direct a:hover { background: color-mix(in srgb, var(--accent) 8%, var(--surface)); color: var(--accent); }
+.contact-aside .direct .k { color: var(--muted); letter-spacing: .1em; text-transform: uppercase; font-size: .68rem; min-width: 5.5rem; }
+
+/* ============================================================
+   10) FOOTER
+   ============================================================ */
+.site-footer {
+  border-top: 1px solid var(--line);
+  padding-block: clamp(40px, 7vw, 64px);
+  padding-bottom: max(clamp(40px,7vw,64px), env(safe-area-inset-bottom));
+}
+.footer-top { display: grid; gap: 28px; }
+.footer-brand .mark { width: 40px; height: 40px; color: var(--ink); margin-bottom: .8rem; }
+.footer-brand .name { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; }
+.footer-brand .slogan { color: var(--muted); font-size: .95rem; margin-top: .3rem; }
+.footer-links { display: flex; flex-wrap: wrap; gap: .5rem 1.6rem; }
+.footer-links a {
+  font-family: var(--font-mono); font-size: .8rem; letter-spacing: .04em; color: var(--muted);
+  display: inline-flex; align-items: center; gap: .45rem; padding: .3rem 0;
+  transition: color .2s;
+}
+.footer-links a:hover { color: var(--accent); }
+.footer-bottom {
+  margin-top: clamp(32px, 5vw, 52px); padding-top: 22px; border-top: 1px solid var(--line);
+  display: flex; flex-wrap: wrap; gap: .6rem 1.4rem; justify-content: space-between;
+  font-family: var(--font-mono); font-size: .72rem; letter-spacing: .04em; color: var(--muted);
+}
+.footer-bottom a { color: var(--muted); }
+.footer-bottom a:hover { color: var(--ink); }
+
+/* ============================================================
+   11) SCROLL-ANIMATIONSEBENE (Zahnrad auf Sinuslinie)
+   ============================================================ */
+#flow {
+  position: absolute; top: 0; left: 0;
+  z-index: 0;                         /* hinter dem Inhalt (.shell = z-index:1) */
+  pointer-events: none;
+  overflow: visible;
+}
+#flowPath {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  opacity: .26;                       /* dezente Linie */
+  vector-effect: non-scaling-stroke;
+}
+[data-theme="dark"] #flowPath { opacity: .22; }
+.gear-line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+#flowGear { opacity: .78; will-change: transform; }
+
+/* ============================================================
+   12) REVEAL-ANIMATIONEN (sanftes Einsliden beim Scrollen)
+   Nur aktiv, wenn JS läuft -> ohne JS bleibt alles sichtbar.
+   ============================================================ */
+.js .reveal {
+  opacity: 0; transform: translateY(22px);
+  transition: opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1);
+  will-change: opacity, transform;
+}
+.js .reveal.in-view { opacity: 1; transform: none; }
+/* leichte Staffelung für Karten/Listen */
+.js .stagger > * { opacity: 0; transform: translateY(18px); transition: opacity .6s cubic-bezier(.2,.7,.2,1), transform .6s cubic-bezier(.2,.7,.2,1); }
+.js .stagger.in-view > * { opacity: 1; transform: none; }
+.js .stagger.in-view > *:nth-child(2) { transition-delay: .07s; }
+.js .stagger.in-view > *:nth-child(3) { transition-delay: .14s; }
+.js .stagger.in-view > *:nth-child(4) { transition-delay: .21s; }
+.js .stagger.in-view > *:nth-child(5) { transition-delay: .28s; }
+.js .stagger.in-view > *:nth-child(6) { transition-delay: .35s; }
+
+/* ============================================================
+   13) RESPONSIVE (Mobile-First -> ab hier hochskalieren)
+   ============================================================ */
+@media (min-width: 560px) {
+  .spec-row { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (min-width: 860px) {
+  /* Navigation wieder horizontal in der Kopfzeile */
+  .menu-btn { display: none; }
+  .nav {
+    position: static; flex-direction: row; align-items: center;
+    padding: 0; background: none; border: none;
+    transform: none; visibility: visible;
+  }
+  .nav a { padding: .5rem .7rem; font-size: .8rem; }
+
+  .about-grid { grid-template-columns: 1.05fr .95fr; align-items: start; }
+  .contact-grid { grid-template-columns: 1.1fr .9fr; align-items: start; }
+  .skill .desc { display: block; }
+
+  /* Ablauf horizontal mit Maßpfeilen dazwischen */
+  .process { flex-direction: row; align-items: stretch; }
+  .conn {
+    display: flex; align-items: center; justify-content: center;
+    flex: 0 0 56px; align-self: center;
+  }
+  .conn svg { width: 56px; height: 18px; color: var(--accent); }
+}
+
+@media (min-width: 1024px) {
+  .hero h1 { font-size: clamp(4rem, 8.5vw, 7rem); }
+}
+
+/* ============================================================
+   14) REDUZIERTE BEWEGUNG respektieren (Barrierefreiheit)
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+  .js .reveal, .js .stagger > * { opacity: 1 !important; transform: none !important; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ====== SCROLL-ANIMATIONSEBENE: Sinuslinie + Zahnrad ======
+     Pfad und Zahnrad werden per JS erzeugt/positioniert (siehe unten). -->
+<svg id="flow" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+  <path id="flowPath"></path>
+  <g id="flowGear"></g>
+</svg>
+
+<!-- ====== UNSICHTBARES SVG-SPRITE: BD-Logo (PLATZHALTER) ======
+     Hier dein eigenes Logo einsetzen. Überall sonst per <use> referenziert,
+     du musst es also nur an EINER Stelle austauschen. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="bd-mark" viewBox="0 0 100 100">
+    <rect x="6" y="6" width="88" height="88" rx="14" fill="none" stroke="currentColor" stroke-width="2.4"/>
+    <text x="50" y="53" text-anchor="middle" dominant-baseline="central"
+          font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="46"
+          letter-spacing="-2" fill="currentColor">BD</text>
+    <circle cx="77" cy="77" r="3.6" fill="var(--accent)"/>
+  </symbol>
+</svg>
+
+<!-- =========================== KOPFZEILE =========================== -->
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="#top" aria-label="Burgermeister Design — Startseite">
+      <svg class="mark" aria-hidden="true"><use href="#bd-mark"/></svg>
+      <span class="name">Burgermeister&nbsp;Design</span>
+    </a>
+
+    <nav class="nav" id="nav" aria-label="Hauptnavigation">
+      <a href="#ueber">Über mich</a>
+      <a href="#projekte">Projekte</a>
+      <a href="#leistungen">Leistungen</a>
+      <a href="#kontakt">Kontakt</a>
+    </nav>
+
+    <div class="header-tools">
+      <!-- Dark-Mode-Umschalter -->
+      <button class="icon-btn" id="theme-toggle" type="button" aria-label="Hell-/Dunkelmodus umschalten">
+        <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" stroke-linejoin="round"/></svg>
+        <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1" stroke-linecap="round"/></svg>
+      </button>
+      <!-- Mobiles Menü -->
+      <button class="icon-btn menu-btn" id="menu-toggle" type="button" aria-label="Menü öffnen" aria-expanded="false" aria-controls="nav">
+        <span><span class="bar"></span><span class="bar"></span><span class="bar"></span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="shell">
+<main id="top">
+
+  <!-- =========================== HERO =========================== -->
+  <section class="hero container" aria-labelledby="hero-title">
+    <p class="corner-id">01 — BURGERMEISTER&nbsp;DESIGN · BADEN-WÜRTTEMBERG</p>
+
+    <h1 id="hero-title" class="reveal">Burgermeister<br><span class="line2">Design</span></h1>
+
+    <p class="slogan reveal">Perfektion in <b>jeder Dimension</b>.</p>
+
+    <p class="intro reveal">Ich entwerfe präzise Bauteile in CAD und fertige sie im 3D-Druck.
+      Von der ersten Idee bis zum fertigen Teil — sauber konstruiert, maßhaltig gedruckt.</p>
+
+    <div class="hero-actions reveal">
+      <a class="btn btn-primary" href="#projekte">Projekte ansehen <span class="arr">→</span></a>
+      <a class="btn btn-ghost" href="#kontakt">3D-Druck anfragen</a>
+    </div>
+
+    <!-- Spezifikations-Block (wie ein Schriftfeld in der Zeichnung) -->
+    <dl class="spec-row reveal">
+      <div><dt>Wer</dt><dd>Louis Burgermeister</dd></div>
+      <div><dt>Fokus</dt><dd>Technischer Produktdesign</dd></div>
+      <div><dt>Fertigung</dt><dd>CAD → 3D-Druck</dd></div>
+    </dl>
+
+    <!-- dekorative Bemaßungslinie -->
+    <div class="dim reveal" aria-hidden="true">
+      <span>SCALE 1:1</span><span class="rule"></span><span>PRÄZISION ±0,1&nbsp;mm</span>
+    </div>
+  </section>
+
+  <!-- =========================== ÜBER MICH =========================== -->
+  <section id="ueber" class="section container">
+    <div class="section-head reveal">
+      <span class="label">02 / Über mich</span>
+      <h2>Konstruieren ist mein Handwerk.</h2>
+    </div>
+
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <p>Mein Name ist Louis Burgermeister, ich bin 15 Jahre alt und komme aus Baden-Württemberg.
+          Mein Ziel ist der Beruf des Technischen Produktdesigners.</p>
+        <p>Ich konstruiere dreidimensionale Modelle am Rechner und bringe sie mit dem 3D-Drucker in
+          die Realität. Was als Hobby begann, wird für mich Stück für Stück zum Handwerk:
+          sauber bemaßt, durchdacht aufgebaut und präzise gefertigt.</p>
+        <p>Meine Modelle veröffentliche ich auf MakerWorld und drucke Auftragsteile nach Maß —
+          vom kleinen Halter bis zum funktionierenden Mechanik-Modell.</p>
+      </div>
+
+      <!-- Werkzeuge als "Stückliste" -->
+      <div class="skills reveal stagger" aria-label="Werkzeuge und Software">
+        <div class="skill"><span class="idx">A1</span><span class="name">Fusion&nbsp;360</span><span class="desc">Parametrische CAD</span></div>
+        <div class="skill"><span class="idx">A2</span><span class="name">Onshape</span><span class="desc">Cloud-CAD</span></div>
+        <div class="skill"><span class="idx">A3</span><span class="name">Blender</span><span class="desc">Modelling &amp; Render</span></div>
+        <div class="skill"><span class="idx">B1</span><span class="name">Bambu&nbsp;Lab&nbsp;P2S</span><span class="desc">FDM-Druck</span></div>
+        <div class="skill"><span class="idx">C1</span><span class="name">MakerWorld</span><span class="desc">Modelle &amp; Community</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================== PROJEKTE =========================== -->
+  <section id="projekte" class="section container">
+    <div class="section-head reveal">
+      <span class="label">03 / Projekte · Platzhalter</span>
+      <h2>Ausgewählte Modelle</h2>
+      <p class="lead">Diese Karten sind Platzhalter — ersetze Titel, Text und MakerWorld-Link
+        durch deine echten Projekte. Struktur bleibt gleich.</p>
+    </div>
+
+    <div class="projects stagger reveal">
+
+      <!-- PROJEKT 1 -->
+      <article class="card">
+        <div class="thumb">
+          <!-- Platzhalter-Illustration (Kabelhalter / Clip) -->
+          <svg viewBox="0 0 120 90" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <path d="M30 70V35a14 14 0 0 1 28 0v18a8 8 0 0 0 16 0V30" stroke-linecap="round"/>
+            <rect x="22" y="68" width="68" height="9" rx="2"/>
+            <circle cx="30" cy="35" r="2.4" fill="currentColor" stroke="none"/>
+            <path d="M88 24h10M93 19v10" stroke="var(--accent)" stroke-width="1.6"/>
+          </svg>
+        </div>
+        <div class="body">
+          <span class="tag">CAD · PARAMETRISCH</span>
+          <h3>Parametrischer Kabelhalter</h3>
+          <p>Modularer Halter für sauberes Kabelmanagement — Maße in Fusion 360 voll parametrisch.</p>
+          <a class="link" href="#" target="_blank" rel="noopener">Auf MakerWorld ansehen <span class="arr">↗</span></a>
+        </div>
+      </article>
+
+      <!-- PROJEKT 2 -->
+      <article class="card">
+        <div class="thumb">
+          <svg viewBox="0 0 120 90" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <rect x="24" y="22" width="72" height="46" rx="6"/>
+            <path d="M40 22v46M56 22v46M72 22v46M88 22v46" stroke-width="1.4"/>
+            <circle cx="30" cy="28" r="2.4"/><circle cx="90" cy="28" r="2.4"/>
+            <circle cx="30" cy="62" r="2.4"/><circle cx="90" cy="62" r="2.4"/>
+            <path d="M100 45h8" stroke="var(--accent)" stroke-width="1.6"/>
+          </svg>
+        </div>
+        <div class="body">
+          <span class="tag">GEHÄUSE</span>
+          <h3>Gehäuse Raspberry Pi 5</h3>
+          <p>Passgenaues Gehäuse mit Lüftungsschlitzen, Schraubdomen und Zugang zu allen Ports.</p>
+          <a class="link" href="#" target="_blank" rel="noopener">Auf MakerWorld ansehen <span class="arr">↗</span></a>
+        </div>
+      </article>
+
+      <!-- PROJEKT 3 -->
+      <article class="card">
+        <div class="thumb">
+          <svg viewBox="0 0 120 90" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+            <ellipse cx="60" cy="30" rx="30" ry="11"/>
+            <path d="M30 30v22c0 6 13.4 11 30 11s30-5 30-11V30"/>
+            <ellipse cx="48" cy="29" rx="6" ry="2.4" fill="currentColor" stroke="none" opacity=".5"/>
+            <ellipse cx="68" cy="32" rx="6" ry="2.4" fill="var(--accent)" stroke="none"/>
+          </svg>
+        </div>
+        <div class="body">
+          <span class="tag">ALLTAG</span>
+          <h3>Modularer Stiftehalter</h3>
+          <p>Erweiterbares Stecksystem für den Schreibtisch — beliebig kombinierbar.</p>
+          <a class="link" href="#" target="_blank" rel="noopener">Auf MakerWorld ansehen <span class="arr">↗</span></a>
+        </div>
+      </article>
+
+      <!-- PROJEKT 4 -->
+      <article class="card">
+        <div class="thumb">
+          <!-- sauberes 12-Zahn-Zahnrad, Mittelpunkt 60,45 -->
+          <svg viewBox="0 0 120 90" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <!-- Zähne: radiale Striche r=22 -> r=27, alle 30° -->
+            <path stroke-linecap="round" d="M82 45L87 45 M79.05 56L83.4 58.5 M71 64.05L73.5 68.4 M60 67L60 72 M49 64.05L46.5 68.4 M40.95 56L36.6 58.5 M38 45L33 45 M40.95 34L36.6 31.5 M49 25.95L46.5 21.6 M60 23L60 18 M71 25.95L73.5 21.6 M79.05 34L83.4 31.5"/>
+            <circle cx="60" cy="45" r="22"/>            <!-- Außenkranz -->
+            <circle cx="60" cy="45" r="9"/>             <!-- Nabe -->
+            <circle cx="60" cy="45" r="3" stroke="var(--accent)"/><!-- Bohrung -->
+          </svg>
+        </div>
+        <div class="body">
+          <span class="tag">FUNKTIONSMODELL</span>
+          <h3>Planetengetriebe (Demo)</h3>
+          <p>Druckbares Modell zum Verständnis von Übersetzungen — dreht sich wirklich.</p>
+          <a class="link" href="#" target="_blank" rel="noopener">Auf MakerWorld ansehen <span class="arr">↗</span></a>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- =========================== LEISTUNGEN =========================== -->
+  <section id="leistungen" class="section container">
+    <div class="section-head reveal">
+      <span class="label">04 / Leistungen</span>
+      <h2>3D-Druck nach Auftrag</h2>
+      <p class="lead">Du hast eine Idee oder eine Zeichnung? Ich konstruiere das passende Bauteil
+        und drucke es für dich — vom Prototyp bis zur Kleinserie.</p>
+    </div>
+
+    <!-- Ablauf: Idee -> CAD -> Druck (echte Reihenfolge => nummeriert) -->
+    <div class="process reveal">
+      <article class="step">
+        <span class="num">SCHRITT 01</span>
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.4.9 1 .9 1.7V17h5.2v-1.4c0-.7.3-1.3.9-1.7A6 6 0 0 0 12 3z" stroke-linejoin="round"/><path d="M9.4 20h5.2M10 22h4" stroke-linecap="round"/></svg>
+        <h3>Idee</h3>
+        <p>Skizze, Foto oder Beschreibung. Wir klären Maße, Material und Einsatzzweck.</p>
+      </article>
+
+      <div class="conn" aria-hidden="true">
+        <svg viewBox="0 0 56 18" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 9h44M40 4l6 5-6 5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+
+      <article class="step">
+        <span class="num">SCHRITT 02</span>
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 17 11 6l4 5 3-3 4 9z" stroke-linejoin="round"/><circle cx="11" cy="6" r="1.4" fill="currentColor" stroke="none"/></svg>
+        <h3>CAD</h3>
+        <p>Präzise Konstruktion in Fusion 360 / Onshape — maßhaltig und druckgerecht.</p>
+      </article>
+
+      <div class="conn" aria-hidden="true">
+        <svg viewBox="0 0 56 18" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 9h44M40 4l6 5-6 5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+
+      <article class="step">
+        <span class="num">SCHRITT 03</span>
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="4" y="4" width="16" height="9" rx="1.5"/><path d="M7 13v4h10v-4M9 17v3h6v-3" stroke-linejoin="round"/><path d="M8 8h4" stroke-linecap="round" stroke="var(--accent)"/></svg>
+        <h3>Druck</h3>
+        <p>Fertigung auf dem Bambu Lab P2S — sauber, stabil und einsatzbereit.</p>
+      </article>
+    </div>
+
+    <!-- Spezifikationen -->
+    <div class="spec-strip reveal">
+      <span>MATERIALIEN&nbsp; <b>PLA · PETG · TPU</b></span>
+      <span>AUFLÖSUNG&nbsp; <b>ab 0,1&nbsp;mm</b></span>
+      <span>BAURAUM&nbsp; <b>256 × 256 × 256&nbsp;mm</b></span>
+      <span>DATEIEN&nbsp; <b>STL · STEP · 3MF</b></span>
+    </div>
+  </section>
+
+  <!-- =========================== KONTAKT =========================== -->
+  <section id="kontakt" class="section container">
+    <div class="section-head reveal">
+      <span class="label">05 / Kontakt</span>
+      <h2>Projekt anfragen</h2>
+      <p class="lead">Erzähl mir kurz, was du brauchst. Ich melde mich zurück.</p>
+    </div>
+
+    <div class="contact-grid">
+      <!-- HINWEIS: Statische Seite ohne Server.
+           Standard: Beim Absenden öffnet sich dein E-Mail-Programm (mailto, siehe JS).
+           Komfortabler ohne mailto -> Formspree o.ä. nutzen:
+             1) <form ...> um  action="https://formspree.io/f/DEIN_ID" method="POST"  ergänzen
+             2) name-Attribute beibehalten
+             3) im JS das e.preventDefault()/mailto entfernen -->
+      <form class="form reveal" id="contact-form" novalidate>
+        <div class="field">
+          <label for="cf-name">Name</label>
+          <input id="cf-name" name="name" type="text" autocomplete="name" required placeholder="Dein Name">
+        </div>
+        <div class="field">
+          <label for="cf-mail">E-Mail</label>
+          <input id="cf-mail" name="email" type="email" autocomplete="email" required placeholder="dein@beispiel.de">
+        </div>
+        <div class="field">
+          <label for="cf-msg">Nachricht</label>
+          <textarea id="cf-msg" name="message" required placeholder="Was möchtest du drucken lassen? Maße, Material, Stückzahl …"></textarea>
+        </div>
+        <button class="btn btn-primary" type="submit">Anfrage senden <span class="arr">→</span></button>
+        <p class="form-note">Mit dem Absenden öffnet sich dein E-Mail-Programm mit der fertigen Nachricht.</p>
+        <p class="form-status" id="cf-status" role="status" aria-live="polite"></p>
+      </form>
+
+      <aside class="contact-aside reveal">
+        <p>Lieber direkt? Erreichst du mich hier:</p>
+        <div class="direct">
+          <a href="mailto:kontakt@burgermeister-design.de">
+            <span class="k">E-Mail</span> kontakt@burgermeister-design.de
+          </a>
+          <a href="#" target="_blank" rel="noopener">
+            <span class="k">MakerWorld</span> @burgermeister-design
+          </a>
+          <a href="#" target="_blank" rel="noopener">
+            <span class="k">Instagram</span> @burgermeister.design
+          </a>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+</main>
+</div>
+
+<!-- =========================== FOOTER =========================== -->
+<footer class="site-footer shell">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <svg class="mark" aria-hidden="true"><use href="#bd-mark"/></svg>
+        <div class="name">Burgermeister Design</div>
+        <div class="slogan">Perfektion in jeder Dimension.</div>
+      </div>
+
+      <nav class="footer-links" aria-label="Footer-Links">
+        <!-- echte Profile/Adressen hier eintragen -->
+        <a href="#" target="_blank" rel="noopener">MakerWorld <span aria-hidden="true">↗</span></a>
+        <a href="#" target="_blank" rel="noopener">Instagram <span aria-hidden="true">↗</span></a>
+        <a href="mailto:kontakt@burgermeister-design.de">E-Mail <span aria-hidden="true">→</span></a>
+      </nav>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> Burgermeister Design · Baden-Württemberg</span>
+      <!-- Hinweis: Für eine öffentlich erreichbare deutsche Seite ist ein Impressum Pflicht
+           (§ 5 DDG). Datenschutzerklärung ergänzen, sobald das Formular Daten verarbeitet. -->
+      <span><a href="#">Impressum</a> · <a href="#">Datenschutz</a></span>
+    </div>
+  </div>
+</footer>
+
+<!-- ============================================================
+     SCRIPTE
+     ============================================================ -->
+<script>
+(function () {
+  "use strict";
+
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var doc = document;
+
+  /* ---------- Jahr im Footer ---------- */
+  doc.getElementById('year').textContent = new Date().getFullYear();
+
+  /* ---------- Dark-Mode-Umschalter ---------- */
+  var themeBtn = doc.getElementById('theme-toggle');
+  themeBtn.addEventListener('click', function () {
+    var next = doc.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    doc.documentElement.setAttribute('data-theme', next);
+    try { localStorage.setItem('bd-theme', next); } catch (e) {}
+  });
+
+  /* ---------- Mobiles Menü ---------- */
+  var menuBtn = doc.getElementById('menu-toggle');
+  var nav = doc.getElementById('nav');
+  function setMenu(open) {
+    doc.body.classList.toggle('nav-open', open);
+    menuBtn.setAttribute('aria-expanded', String(open));
+    menuBtn.setAttribute('aria-label', open ? 'Menü schließen' : 'Menü öffnen');
+  }
+  menuBtn.addEventListener('click', function () { setMenu(!doc.body.classList.contains('nav-open')); });
+  // beim Klick auf einen Link Menü schließen
+  nav.addEventListener('click', function (e) { if (e.target.closest('a')) setMenu(false); });
+
+  /* ---------- Reveal beim Scrollen (IntersectionObserver) ---------- */
+  var revealEls = doc.querySelectorAll('.reveal');
+  if (reduceMotion || !('IntersectionObserver' in window)) {
+    revealEls.forEach(function (el) { el.classList.add('in-view'); });
+  } else {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) { entry.target.classList.add('in-view'); io.unobserve(entry.target); }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    revealEls.forEach(function (el) { io.observe(el); });
+  }
+
+  /* ---------- Kontaktformular (mailto-Fallback ohne Server) ---------- */
+  var form = doc.getElementById('contact-form');
+  var status = doc.getElementById('cf-status');
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!form.reportValidity()) return;           // HTML5-Validierung nutzen
+    var name = doc.getElementById('cf-name').value.trim();
+    var mail = doc.getElementById('cf-mail').value.trim();
+    var msg  = doc.getElementById('cf-msg').value.trim();
+    var subject = encodeURIComponent('Anfrage über burgermeister-design.de — ' + name);
+    var body = encodeURIComponent('Name: ' + name + '\nE-Mail: ' + mail + '\n\n' + msg);
+    // ===> hier ggf. deine echte Adresse eintragen:
+    window.location.href = 'mailto:kontakt@burgermeister-design.de?subject=' + subject + '&body=' + body;
+    status.textContent = 'Dein E-Mail-Programm öffnet sich – einmal abschicken, fertig.';
+  });
+
+  /* ========================================================
+     SIGNATURE-ANIMATION: Zahnrad auf sich zeichnender Sinuslinie
+     - Linie läuft über die gesamte Seitenhöhe (dezent, hinter Inhalt)
+     - Zahnrad sitzt exакt auf der Linie (getPointAtLength) und dreht sich
+     - Performant: nur transform/stroke-dashoffset, gedrosselt per rAF
+     ======================================================== */
+  var svg  = doc.getElementById('flow');
+  var path = doc.getElementById('flowPath');
+  var gear = doc.getElementById('flowGear');
+
+  /* Zahnrad als feine Linienzeichnung erzeugen (zentriert auf 0,0) */
+  function buildGear() {
+    var teeth = 11, rOut = 22, rIn = 16, hub = 8.5, bore = 3.2, holeR = 11;
+    var d = '', step = (Math.PI * 2) / teeth;
+    for (var i = 0; i < teeth; i++) {
+      var a = i * step;
+      // 4 Punkte pro Zahn: Tal – Zahnkopf links – Zahnkopf rechts – Tal
+      var pts = [
+        [a - step * 0.32, rIn],
+        [a - step * 0.16, rOut],
+        [a + step * 0.16, rOut],
+        [a + step * 0.32, rIn]
+      ];
+      for (var j = 0; j < 4; j++) {
+        var x = (pts[j][1] * Math.cos(pts[j][0])).toFixed(2);
+        var y = (pts[j][1] * Math.sin(pts[j][0])).toFixed(2);
+        d += (i === 0 && j === 0 ? 'M' : 'L') + x + ' ' + y + ' ';
+      }
+    }
+    d += 'Z';
+    var svgNS = 'http://www.w3.org/2000/svg';
+    var parts = '';
+    parts += '<path class="gear-line" d="' + d + '"/>';
+    parts += '<circle class="gear-line" r="' + hub + '"/>';
+    parts += '<circle class="gear-line" r="' + bore + '"/>';
+    // kleine Erleichterungsbohrungen (CAD-Detail)
+    for (var k = 0; k < 5; k++) {
+      var ang = (Math.PI * 2 / 5) * k - Math.PI / 2;
+      var cx = (holeR * Math.cos(ang)).toFixed(2);
+      var cy = (holeR * Math.sin(ang)).toFixed(2);
+      parts += '<circle class="gear-line" cx="' + cx + '" cy="' + cy + '" r="1.5"/>';
+    }
+    gear.innerHTML = parts;
+  }
+
+  var totalLen = 0;
+
+  /* Sinus-Pfad passend zur aktuellen Seiten-/Fenstergröße aufbauen */
+  function buildPath() {
+    var w = doc.documentElement.clientWidth;
+    var h = Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight);
+    var mobile = w < 640;
+    var amp = Math.min(w * 0.14, 110) * (mobile ? 0.6 : 1);   // Ausschlag (mobil kleiner)
+    var period = mobile ? 460 : 640;                          // Pixel pro voller Welle
+    var cx = w * 0.5;
+    var d = '', stepY = 12;
+    for (var y = 0; y <= h; y += stepY) {
+      var x = cx + amp * Math.sin((y / period) * Math.PI * 2);
+      d += (y === 0 ? 'M' : 'L') + x.toFixed(1) + ' ' + y.toFixed(1) + ' ';
+    }
+    svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+    svg.style.width = w + 'px';
+    svg.style.height = h + 'px';
+    path.setAttribute('d', d);
+    totalLen = path.getTotalLength();
+    path.style.strokeDasharray = totalLen;
+    update();
+  }
+
+  /* Bei jedem Scroll: Linie bis zum Zahnrad zeichnen + Zahnrad setzen/drehen */
+  function update() {
+    if (!totalLen) return;
+    var scrollTop = window.pageYOffset || doc.documentElement.scrollTop;
+    var maxScroll = Math.max((doc.documentElement.scrollHeight - window.innerHeight), 1);
+    var p = Math.min(Math.max(scrollTop / maxScroll, 0), 1);
+
+    if (reduceMotion) {
+      // ruhige Variante: Linie voll, Zahnrad statisch in der Mitte
+      path.style.strokeDashoffset = 0;
+      var midpt = path.getPointAtLength(totalLen * 0.5);
+      gear.setAttribute('transform', 'translate(' + midpt.x.toFixed(1) + ' ' + midpt.y.toFixed(1) + ')');
+      return;
+    }
+
+    path.style.strokeDashoffset = (totalLen * (1 - p)).toFixed(1);     // von oben bis zum Rad aufdecken
+    var pt = path.getPointAtLength(totalLen * p);                       // Punkt auf der Linie
+    var rot = scrollTop * 0.25;                                         // dreht mit dem Scrollen
+    gear.setAttribute('transform', 'translate(' + pt.x.toFixed(1) + ' ' + pt.y.toFixed(1) + ') rotate(' + rot.toFixed(1) + ')');
+  }
+
+  /* Scroll-Drosselung über requestAnimationFrame (flüssig, kein Ruckeln) */
+  var ticking = false;
+  function onScroll() {
+    if (!ticking) { ticking = true; requestAnimationFrame(function () { update(); ticking = false; }); }
+  }
+
+  /* Resize gedrosselt -> Pfad neu aufbauen (Höhe ändert sich responsiv) */
+  var rT;
+  function onResize() { clearTimeout(rT); rT = setTimeout(buildPath, 150); }
+
+  // Initialisierung
+  buildGear();
+  buildPath();
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onResize);
+  window.addEventListener('load', buildPath);   // nach Font-/Layout-Load Höhe korrigieren
+})();
+</script>
+</body>
+</html>
