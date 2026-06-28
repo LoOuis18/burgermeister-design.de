@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arbeitnehmer & Arbeitgeber — Lernzettel 9b</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap');
+
+  :root{
+    --paper:#F4EFE4; --paper-dark:#E8E0CC; --paper-card:#FBF7EC;
+    --ink:#1A1A1A; --ink-soft:#4a4438;
+    --green:#2B5C4A; --red:#C0392B; --brown:#8B6F47; --brown-dark:#6b5536; --gold:#C9A227;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:'Source Serif 4',serif; line-height:1.55;
+    background-image:repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(0,0,0,0.022) 40px);
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* Sticky Anker-Navigation (echte Links, kein JS) */
+  .nav{
+    position:sticky; top:0; z-index:50; background:var(--brown);
+    display:flex; gap:4px; padding:0 16px; height:54px; align-items:center;
+    box-shadow:0 2px 10px rgba(0,0,0,0.25); justify-content:center;
+  }
+  .nav a{
+    font-family:'Courier Prime',monospace; font-size:13px; letter-spacing:0.04em;
+    color:var(--paper); text-decoration:none; padding:9px 16px; border-radius:3px;
+    border:1px solid rgba(244,239,228,0.35); transition:background .15s;
+  }
+  .nav a:hover{background:rgba(244,239,228,0.15);}
+
+  main{max-width:820px; margin:0 auto; padding:34px 18px 90px;}
+
+  .file-header{
+    border:2px solid var(--ink); background:var(--paper-dark);
+    padding:22px 24px; margin-bottom:34px; position:relative;
+  }
+  .file-header::before{
+    content:"AKTE Nr. 9b–WBS–02"; position:absolute; top:-11px; left:20px;
+    background:var(--paper); padding:0 8px; font-family:'Courier Prime',monospace;
+    font-size:11px; letter-spacing:0.08em; color:var(--brown-dark);
+  }
+  .file-header h1{margin:6px 0; font-size:clamp(26px,5vw,38px); font-weight:700; letter-spacing:-0.01em;}
+  .file-header .sub{margin:0; font-family:'Courier Prime',monospace; font-size:13px; color:var(--brown-dark);}
+  .stempel{
+    display:inline-block; border:3px solid var(--red); color:var(--red);
+    font-family:'Courier Prime',monospace; font-weight:700; font-size:12px;
+    letter-spacing:0.06em; padding:4px 11px; transform:rotate(-4deg); border-radius:4px; margin-top:12px;
+  }
+
+  .section-title{
+    font-family:'Courier Prime',monospace; font-size:13px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--brown-dark); font-weight:700;
+    border-bottom:2px solid var(--brown); padding-bottom:8px; margin:48px 0 24px;
+    scroll-margin-top:70px;
+  }
+  .section-title:first-of-type{margin-top:0;}
+
+  /* Lernteil */
+  .topic{border-left:4px solid var(--green); padding:4px 0 4px 18px; margin-bottom:30px;}
+  .topic-tag{font-family:'Courier Prime',monospace; font-size:12px; color:var(--green); letter-spacing:0.1em; text-transform:uppercase; font-weight:700; margin-bottom:4px;}
+  .topic h2{margin:0 0 10px; font-size:22px;}
+  .topic p{font-size:16px; margin:0 0 10px;}
+  ul.tight{margin:8px 0; padding-left:22px;}
+  ul.tight li{margin-bottom:5px; font-size:15.5px;}
+  .merke{background:#FBF6E9; border:1px dashed var(--brown); padding:13px 16px; margin:12px 0; font-size:14.5px; position:relative;}
+  .merke::before{content:"MERKE"; font-family:'Courier Prime',monospace; font-size:10px; letter-spacing:0.12em; color:var(--brown-dark); display:block; margin-bottom:5px; font-weight:700;}
+  .mnemonic{background:var(--green); color:var(--paper); padding:12px 16px; margin:12px 0; border-radius:2px; font-size:14.5px; font-style:italic;}
+  .case-box{background:var(--paper-card); border:1px solid var(--brown); padding:13px 16px; margin:11px 0; font-size:14.5px;}
+  .case-box .case-q{font-style:italic; color:var(--green); margin-top:6px; display:block;}
+  table.lohn{width:100%; border-collapse:collapse; font-size:13.5px; margin:12px 0; font-family:'Courier Prime',monospace;}
+  table.lohn th,table.lohn td{border:1px solid var(--brown); padding:7px 10px; text-align:left;}
+  table.lohn th{background:var(--paper-dark);}
+
+  /* Aufklappbare Elemente — natives details-Element, kein JavaScript */
+  details{
+    border:2px solid var(--ink); background:var(--paper-card);
+    border-radius:5px; margin-bottom:13px; overflow:hidden;
+    box-shadow:3px 3px 0 rgba(0,0,0,0.1);
+  }
+  details summary{
+    list-style:none; cursor:pointer; padding:18px 20px; position:relative;
+    display:block; outline-offset:-3px;
+  }
+  details summary::-webkit-details-marker{display:none;}
+  details summary:focus-visible{outline:2px solid var(--green);}
+  .item-tag{font-family:'Courier Prime',monospace; font-size:11px; letter-spacing:0.1em; color:var(--green); text-transform:uppercase; font-weight:700; display:block; margin-bottom:8px;}
+  .item-q{font-size:17px; font-weight:600; line-height:1.4;}
+  .opts{list-style:none; margin:12px 0 0; padding:0;}
+  .opts li{padding:7px 0 7px 30px; position:relative; font-size:15px; border-top:1px solid var(--paper-dark);}
+  .opts li::before{content:attr(data-l); position:absolute; left:0; font-family:'Courier Prime',monospace; font-weight:700; color:var(--brown); width:22px; height:22px; border:1.5px solid var(--brown); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; top:6px;}
+  .reveal-hint{
+    font-family:'Courier Prime',monospace; font-size:11px; letter-spacing:0.05em;
+    color:var(--brown); margin-top:12px; display:inline-flex; align-items:center; gap:6px;
+  }
+  .reveal-hint::before{content:"▸"; font-size:13px;}
+  details[open] .reveal-hint{display:none;}
+
+  /* Antwortbereich */
+  .answer-box{
+    border-top:2px solid var(--ink); padding:16px 20px; font-size:15.5px; line-height:1.55;
+    background:var(--green); color:var(--paper);
+  }
+  .answer-box.solution{background:#FBF6E9; color:var(--ink); border-top-color:var(--gold); border-top-width:4px;}
+  .answer-box .correct-mark{font-family:'Courier Prime',monospace; font-weight:700; color:var(--green); display:block; margin-bottom:6px; font-size:14px;}
+
+  .hint-bar{
+    text-align:center; font-family:'Courier Prime',monospace; font-size:12px;
+    color:var(--brown-dark); background:var(--paper-dark); border:1px dashed var(--brown);
+    padding:12px; border-radius:4px; margin-bottom:22px;
+  }
+
+  .to-top{
+    display:block; text-align:center; font-family:'Courier Prime',monospace; font-size:12px;
+    color:var(--brown-dark); text-decoration:none; margin-top:30px; padding:10px;
+    border:1px solid var(--brown); border-radius:4px;
+  }
+  .to-top:hover{background:var(--paper-dark);}
+
+  @media (max-width:560px){
+    .nav{gap:2px; padding:0 8px;}
+    .nav a{padding:8px 11px; font-size:12px;}
+    main{padding:26px 14px 70px;}
+  }
+  @media (prefers-reduced-motion:no-preference){
+    details[open] .answer-box{animation:slide .25s ease;}
+    @keyframes slide{from{opacity:0;}to{opacity:1;}}
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="#lernen">Lernen</a>
+  <a href="#quiz">Quiz</a>
+  <a href="#karten">Karten</a>
+</nav>
+
+<main>
+
+  <div class="file-header" id="top">
+    <h1>Arbeitnehmer & Arbeitgeber</h1>
+    <p class="sub">Klassenarbeit Nr. 2 — Klasse 9b — WBS</p>
+    <div class="stempel">PRÜFUNGSVORBEREITUNG</div>
+  </div>
+
+  <!-- ===================== LERNEN ===================== -->
+  <h2 class="section-title" id="lernen">Teil 1 — Lernteil zum Lesen</h2>
+
+  <div class="topic">
+    <div class="topic-tag">01 — Grundlagen</div>
+    <h2>Arbeitnehmer vs. Arbeitgeber</h2>
+    <p>In einem Arbeitsverhältnis treffen zwei Seiten aufeinander. Beide haben eigene Interessen — die nicht immer gleich sind. Genau dort entstehen oft Konflikte.</p>
+    <ul class="tight">
+      <li><strong>Arbeitnehmer will:</strong> faire Bezahlung · pünktlichen Feierabend · Sicherheit im Job · Mitreden bei Entscheidungen</li>
+      <li><strong>Arbeitgeber will:</strong> motivierte Mitarbeiter · flexibel auf Aufträge reagieren · Kosten sparen · Zuverlässigkeit & Leistung</li>
+    </ul>
+    <div class="merke">Konflikte entstehen an den Gegensätzen: faire Bezahlung ↔ Kosten sparen, Feierabend ↔ Flexibilität. Trotzdem müssen beide zusammenarbeiten — deshalb ist gegenseitiges Zuhören wichtig.</div>
+  </div>
+
+  <div class="topic">
+    <div class="topic-tag">02 — Vertrag</div>
+    <h2>Pflichten & Rechte von Azubis</h2>
+    <p>Der Ausbildungsvertrag regelt genau, was erlaubt ist, was man bekommt und woran man sich halten muss.</p>
+    <ul class="tight">
+      <li><strong>Pflichten des Azubis:</strong> Lernpflicht · Sorgfaltspflicht · Schweigepflicht · Anweisungen befolgen</li>
+      <li><strong>Pflichten des Ausbilders</strong> (= Rechte des Azubis): qualifizierte Ausbildung · Materialien bereitstellen · Zeugnis ausstellen · Freistellung für Berufsschule & Prüfungen</li>
+    </ul>
+    <div class="merke">Bei Vertragsverstoß: zuerst <strong>Abmahnung</strong>, bei schweren Verstößen <strong>Kündigung</strong>. Gilt für beide Seiten. Kündigung in der Probezeit: 2 Wochen Frist.</div>
+  </div>
+
+  <div class="topic">
+    <div class="topic-tag">03 — System</div>
+    <h2>Die duale Ausbildung</h2>
+    <p>„Dual" heißt zweifach — die Ausbildung findet an zwei Orten gleichzeitig statt. So werden Wissen und Können verbunden.</p>
+    <ul class="tight">
+      <li><strong>Betrieb:</strong> Praxis · echter Berufsalltag · Umgang mit Kunden/Geräten · Bezahlung</li>
+      <li><strong>Berufsschule:</strong> Theorie · Fachwissen · Prüfungen · Recht/Wirtschaft/Deutsch</li>
+    </ul>
+    <div class="merke">Rund <strong>2/3 aller Jugendlichen</strong> machen eine duale Ausbildung. Schule bereitet vor (Vorbereitung), im Betrieb wird es angewendet (Anwendung).</div>
+  </div>
+
+  <div class="topic">
+    <div class="topic-tag">04 — Lohn</div>
+    <h2>Lohnbildung und Arbeitsmarkt</h2>
+    <p>Der Lohn ist keine Zahl, die sich der Chef einfach ausdenkt. Er entsteht aus mehreren Faktoren:</p>
+    <ul class="tight">
+      <li><strong>Angebot & Nachfrage:</strong> viele Bewerber → niedriger Lohn; knappe Fachkräfte → hoher Lohn</li>
+      <li><strong>Qualifikation:</strong> gute Ausbildung → oft mehr Geld</li>
+      <li><strong>Beruf & Branche:</strong> Technik zahlt meist mehr als Verkauf</li>
+      <li><strong>Region:</strong> Süddeutschland oft mehr als Ostdeutschland</li>
+      <li><strong>Tarifverträge</strong> und <strong>Verhandlung</strong></li>
+    </ul>
+    <div class="case-box"><strong>Lea & Max:</strong> beide 3 Jahre Ausbildung, 40 Std/Woche. Lea (Köchin) ca. 2.200 €, Max (Fachinformatiker) ca. 3.800 €.<span class="case-q">→ Max verdient mehr wegen Beruf & Branche (IT) und hoher Nachfrage.</span></div>
+    <div class="case-box"><strong>Felix & Sarah:</strong> beide Mechatroniker. Felix (Süden) 3.000 €, Sarah (Osten) 2.400 €.<span class="case-q">→ Felix verdient mehr wegen der Region.</span></div>
+  </div>
+
+  <div class="topic">
+    <div class="topic-tag">05 — Geld</div>
+    <h2>Brutto und Netto</h2>
+    <p>Auf dem Konto landet weniger, als im Vertrag steht — weil vom Bruttolohn automatisch Beträge abgezogen werden.</p>
+    <ul class="tight">
+      <li><strong>Brutto</strong> = komplettes Gehalt vor allen Abzügen (steht im Vertrag)</li>
+      <li><strong>Abzüge</strong> = Sozialversicherung + ggf. Steuern</li>
+      <li><strong>Netto</strong> = das Geld, das tatsächlich aufs Konto kommt</li>
+    </ul>
+    <div class="mnemonic">„B wie Brutto steht im Alphabet vor N wie Netto" → erst der volle Betrag, dann Abzüge, dann Netto. ODER: Brutto = brutal viel, Netto = net mehr so viel.</div>
+    <table class="lohn">
+      <tr><th>Abzug</th><th>Satz</th><th>bei 1.000 €</th></tr>
+      <tr><td>Krankenversicherung</td><td>8,9 %</td><td>89 €</td></tr>
+      <tr><td>Rentenversicherung</td><td>9,3 %</td><td>93 €</td></tr>
+      <tr><td>Arbeitslosenvers.</td><td>1,3 %</td><td>13 €</td></tr>
+      <tr><td>Pflegeversicherung</td><td>1,7 %</td><td>17 €</td></tr>
+      <tr><td>Lohnsteuer (Azubi)</td><td>0 %</td><td>0 €</td></tr>
+    </table>
+    <div class="merke">Azubis mit ~1.000 € brutto zahlen <strong>keine Lohnsteuer</strong> (Grundfreibetrag 12.240 €/Jahr) — nur Sozialversicherung (~212 € → netto ca. 788 €). Der Arbeitgeber zahlt denselben Anteil nochmal extra dazu.</div>
+  </div>
+
+  <div class="topic">
+    <div class="topic-tag">06 — Schutz</div>
+    <h2>Sozialversicherung</h2>
+    <p>Die Abzüge fließen in die Sozialversicherung. Sie schützt bei Krankheit, Unfall, Jobverlust und im Alter. Fünf Säulen:</p>
+    <ul class="tight">
+      <li><strong>Krankenversicherung</strong> — bei Krankheit & Arztkosten</li>
+      <li><strong>Rentenversicherung</strong> — Geld im Alter</li>
+      <li><strong>Arbeitslosenversicherung</strong> — Hilfe bei Jobverlust</li>
+      <li><strong>Pflegeversicherung</strong> — bei Pflegebedürftigkeit</li>
+      <li><strong>Unfallversicherung</strong> — bei Arbeitsunfällen/Berufskrankheit</li>
+    </ul>
+    <div class="merke"><strong>Solidarprinzip:</strong> „Einer für alle — alle für einen." AN und AG zahlen je die Hälfte. Auch junge, gesunde Menschen zahlen ein — sonst würde das System zusammenbrechen.</div>
+  </div>
+
+  <div class="topic">
+    <div class="topic-tag">07 — Mitbestimmung</div>
+    <h2>Betriebsrat & JAV</h2>
+    <p>Auch Beschäftigte dürfen mitreden — über den Betriebsrat. Er wird gewählt und vertritt ihre Interessen gegenüber dem Arbeitgeber.</p>
+    <ul class="tight">
+      <li><strong>Betriebsrat:</strong> ab <strong>5 Beschäftigten</strong> · vertritt die Belegschaft · bestimmt mit bei Arbeitszeit, Pausen, Kündigungen</li>
+      <li><strong>JAV</strong> (Jugend- & Auszubildendenvertretung): ab <strong>5 Azubis unter 25</strong> · kümmert sich um Azubi-Anliegen · arbeitet mit dem Betriebsrat zusammen</li>
+    </ul>
+    <div class="merke">Auch Azubis dürfen wählen und gewählt werden. Mitbestimmung sorgt dafür, dass Arbeit fair bleibt.</div>
+  </div>
+
+  <a href="#top" class="to-top">↑ nach oben</a>
+
+  <!-- ===================== QUIZ ===================== -->
+  <h2 class="section-title" id="quiz">Teil 2 — Quiz zum Selbst-Testen</h2>
+  <div class="hint-bar">Lies die Frage, überlege dich für eine Antwort — dann tippe auf die Karte, um die Lösung zu sehen.</div>
+
+  <details>
+    <summary>
+      <span class="item-tag">Frage 1 · AN vs. AG</span>
+      <span class="item-q">Was wünscht sich ein Arbeitnehmer NICHT?</span>
+      <ul class="opts"><li data-l="A">Faire Bezahlung</li><li data-l="B">Möglichst wenig arbeiten</li><li data-l="C">Sicherheit im Job</li><li data-l="D">Mitreden bei Entscheidungen</li></ul>
+      <span class="reveal-hint">Tippen für Lösung</span>
+    </summary>
+    <div class="answer-box solution"><span class="correct-mark">✓ Richtig: B — Möglichst wenig arbeiten</span>Der AN wünscht sich Bezahlung, Feierabend, Sicherheit und Mitsprache — „wenig arbeiten" gehört nicht dazu.</div>
+  </details>
+
+  <details>
+    <summary>
+      <span class="item-tag">Frage 2 · AN vs. AG</span>
+      <span class="item-q">Welches Ziel hat typischerweise der Arbeitgeber?</span>
+      <ul class="opts"><li data-l="A">Pünktlicher Feierabend</li><li data-l="B">Sicherheit im Job</li><li data-l="C">Kosten sparen</li><li data-l="D">Mitreden dürfen</li></ul>
+      <span class="reveal-hint">Tippen für Lösung</span>
+    </summary>
+    <div class="answer-box solution"><span class="correct-mark">✓ Richtig: C — Kosten sparen</span>Der AG denkt wirtschaftlich: motivierte Mitarbeiter, Flexibilität, Kosten sparen, Zuverlässigkeit & Leistung.</div>
+  </details>
+
+  <details>
+    <summary>
+      <span class="item-tag">Frage 3 · Vertrag</span>
+      <span class="item-q">Welches ist KEINE Pflicht des Auszubildenden?</span>
+      <ul class="opts"><li data-l="A">Lernpflicht</li><li data-l="B">Schweigepflicht</li><li data-l="C">Sorgfaltspflicht</li><li data-l="D">Zeugnis ausstellen</li></ul>
+      <span class="reveal-hint">Tippen für Lösung</span>
+    </summary>
+    <div class="answer-box solution"><span class="correct-mark">✓ Richtig: D — Zeugnis ausstellen</span>Das ist Pflicht des Ausbilders. Azubi-Pflichten: Lern-, Sorgfalts-, Schweigepflicht + Anweisungen befolgen.</div>
+  </details>
+
+  <details>
+    <summary>
+      <span class="item-tag">Frage 4 · Vertrag</span>
+      <span class="item-q">Was passiert zuerst bei einem Vertragsverstoß?</span>
+      <ul class="opts"><li data-l="A">Sofortige Kündigung</li><li data-l="B">Eine Abmahnung</li><li data-l="C">Eine Geldstrafe</li><li data-l="D">Nichts</li></ul>
+      <span class="reveal-hint">Tippen für Lösung</span>
+    </summary>
+    <div class="answer-box solution"><span class="correct-mark">✓ Richtig: B — Eine Abmahnung</span>Zuerst gibt es eine Abmahnung. Erst bei schweren Verstößen kann gekündigt werden.</div>
+  </details>
+
+  <details>
+    <summary>
+      <span class="item-tag">Frage 5 · Duale Ausbildung</span>
+      <span class="item-q">Was bedeutet „dual"?</span>
+      <ul class="opts"><li data-l="A">Doppelt so lang</li><li data-l="B">Zweifach — an zwei Orten</li><li data-l="C">Zwei Berufe gleichzeitig</li><li data-l="D">Doppelter Lohn</li></ul>
+      <span class="reveal-hint">Tippen für Lösung</span>
+    </summary>
+    <div class="answer-box solution"><span class="correct-mark">✓ Richtig: B — Zweifach, an zwei Orten</span>Die Ausbildung findet an zwei Orten statt: Betrieb und Berufsschule.</div>
+  </details>
+
+  <details>
+    <summary>
+      <span class="item-tag">Frage 6 · Duale Ausbildung</span>
+      <span class="item-q">Was gehört zum Lernort Betrieb?</span>
+      <ul class="opts"><li data-l="A">Theorie und Prüfungen</li><li data-l="B">Allgemeinbildung</li><li data-l="C">Praxis und Bezahlung</li><li data-l="D">Recht und Wirtschaft</li></ul>
+      <span class="reveal-hint">Tippen für Lösung</span>
+    </summary>
+    <div class="answer-box solution"><span class="correct-mark">✓ Richtig: C — Praxis und Bezahlung</span>Im Betrieb: Praxis, Berufsalltag, Umgang mit Kunden/Geräten, Bezahlung. Theorie kommt in der Berufsschule.</div>
+  </details>
+
+  <details>
+    <summary>
+      <span class="item-tag">Frage 7 · Duale Ausbildung</span>
+      <span class="item-q">Wie viele Jugendliche machen ca. eine duale Ausbildung?</span>
+      <ul class="opts"><li data-l="A">Ein Drittel</li><li data-l="B">Die Hälfte</li><li data-l="C">Zwei Drittel</li><li data-l="D">Alle</li></ul>
+      <span class="reveal-hint">Tippen für Lösung</span>
+    </summary>
+    <div class="answer-box solution"><span class="correct-mark">✓ Richtig: C — Zwei Drittel</span>Rund zwei Drittel aller Jugendlichen machen nach der Schule eine duale Ausbildung.</div>
+  </details>
+
+  <details>
+    <summary>
+      <span class="item-tag">Frage 8 · Lohnbildung</span>
+      <span class="item-q">Was passiert mit dem Lohn, wenn Fachkräfte knapp sind?</span>
+      <ul class="opts"><li data-l="A">Er sinkt</li><li data-l="B">Er steigt</li><li data-l="C">Er bleibt gleich</li><li data-l="D">Er fällt weg</li></ul>
+      <span class="reveal-hint">Tippen für Lösung</span>
+    </summary>
+    <div class="answer-box solution"><span class="correct-mark">✓ Richtig: B — Er steigt</span>Angebot & Nachfrage: knappe Fachkräfte → höherer Lohn. Viele Bewerber → niedrigerer Lohn.</div>
+  </details>
+
+  <details>
+    <summary>
+      <span class="item-tag">Frage 9 · Lohnbildung</span>
+      <span class="item-q">Warum verdient Max (Fachinformatiker) mehr als Lea (Köchin)?</span>
+      <ul class="opts"><li data-l="A">Er arbeitet länger</li><li data-l="B">Wegen Beruf & Branche</li><li data-l="C">Er ist älter</li><li data-l="D">Wegen der Region</li></ul>
+      <span class="reveal-hint">Tippen für Lösung</span>
+    </summary>
+    <div class="answer-box solution"><span class="correct-mark">✓ Richtig: B — Wegen Beruf & Branche</span>Beide haben gleich lange Ausbildung und Arbeitszeit. Technik/IT zahlt meist mehr.</div>
+  </details>
+
+  <details>
+    <summary>
+      <span class="item-tag">Frage 10 · Lohnbildung</span>
+      <span class="item-q">Felix verdient im Süden mehr als Sarah im Osten. Warum?</span>
+      <ul class="opts"><li data-l="A">Wegen der Region</li><li data-l="B">Bessere Noten</li><li data-l="C">Längere Ausbildung</li><li data-l="D">Mehr Stunden</li></ul>
+      <span class="reveal-hint">Tippen für Lösung</span>
+    </summary>
+    <div class="answer-box solution"><span class="correct-mark">✓ Richtig: A — Wegen der Region</span>Gleicher Beruf, aber im Süden wird oft mehr gezahlt als im Osten.</div>
+  </details>
+
+  <details>
+    <summary>
+      <span class="item-tag">Frage 11 · Brutto/Netto</span>
+      <span class="item-q">Was bedeutet Brutto?</span>
+      <ul class="opts"><li data-l="A">Was aufs Konto kommt</li><li data-l="B">Gehalt vor allen Abzügen</li><li data-l="C">Nur die Steuer</li><li data-l="D">Der Stundenlohn</li></ul>
+      <span class="reveal-hint">Tippen für Lösung</span>
+    </summary>
+    <div class="answer-box solution"><span class="correct-mark">✓ Richtig: B — Gehalt vor allen Abzügen</span>Brutto = vor Abzügen (steht im Vertrag). Netto = was nach Abzügen übrig bleibt.</div>
+  </details>
+
+  <details>
+    <summary>
+      <span class="item-tag">Frage 12 · Brutto/Netto</span>
+      <span class="item-q">Warum zahlt ein Azubi mit 1.000 € brutto keine Lohnsteuer?</span>
+      <ul class="opts"><li data-l="A">Azubis zahlen nie Steuern</li><li data-l="B">Er bleibt unter dem Grundfreibetrag</li><li data-l="C">Der Chef übernimmt sie</li><li data-l="D">Das ist ein Fehler</li></ul>
+      <span class="reveal-hint">Tippen für Lösung</span>
+    </summary>
+    <div class="answer-box solution"><span class="correct-mark">✓ Richtig: B — Unter dem Grundfreibetrag</span>Mit ~1.000 € brutto bleibt man unter dem Grundfreibetrag von 12.240 € — daher keine Lohnsteuer.</div>
+  </details>
+
+  <details>
+    <summary>
+      <span class="item-tag">Frage 13 · Sozialversicherung</span>
+      <span class="item-q">Wie heißt das Prinzip der Sozialversicherung?</span>
+      <ul class="opts"><li data-l="A">Jeder für sich</li><li data-l="B">Solidarprinzip</li><li data-l="C">Sparprinzip</li><li data-l="D">Chefprinzip</li></ul>
+      <span class="reveal-hint">Tippen für Lösung</span>
+    </summary>
+    <div class="answer-box solution"><span class="correct-mark">✓ Richtig: B — Solidarprinzip</span>„Einer für alle, alle für einen." Alle zahlen ein, jeder bekommt im Notfall Hilfe.</div>
+  </details>
+
+  <details>
+    <summary>
+      <span class="item-tag">Frage 14 · Sozialversicherung</span>
+      <span class="item-q">Wie viele Säulen hat die Sozialversicherung?</span>
+      <ul class="opts"><li data-l="A">Drei</li><li data-l="B">Vier</li><li data-l="C">Fünf</li><li data-l="D">Sechs</li></ul>
+      <span class="reveal-hint">Tippen für Lösung</span>
+    </summary>
+    <div class="answer-box solution"><span class="correct-mark">✓ Richtig: C — Fünf</span>Kranken-, Renten-, Arbeitslosen-, Pflege- und Unfallversicherung.</div>
+  </details>
+
+  <details>
+    <summary>
+      <span class="item-tag">Frage 15 · Betriebsrat</span>
+      <span class="item-q">Ab wie vielen Beschäftigten kann ein Betriebsrat gewählt werden?</span>
+      <ul class="opts"><li data-l="A">Ab 3</li><li data-l="B">Ab 5</li><li data-l="C">Ab 10</li><li data-l="D">Ab 20</li></ul>
+      <span class="reveal-hint">Tippen für Lösung</span>
+    </summary>
+    <div class="answer-box solution"><span class="correct-mark">✓ Richtig: B — Ab 5 Beschäftigten</span>Der Betriebsrat wird ab 5 Beschäftigten gewählt. Die JAV ab 5 Azubis unter 25.</div>
+  </details>
+
+  <a href="#top" class="to-top">↑ nach oben</a>
+
+  <!-- ===================== KARTEN ===================== -->
+  <h2 class="section-title" id="karten">Teil 3 — Karteikarten</h2>
+  <div class="hint-bar">Frage lesen, Antwort im Kopf überlegen — dann antippen und vergleichen.</div>
+
+  <details>
+    <summary><span class="item-tag">AN vs. AG</span><span class="item-q">Welche 4 Dinge wünscht sich ein Arbeitnehmer?</span><span class="reveal-hint">Tippen für Antwort</span></summary>
+    <div class="answer-box">Faire Bezahlung, pünktlicher Feierabend, Sicherheit im Job, Mitreden bei Entscheidungen.</div>
+  </details>
+  <details>
+    <summary><span class="item-tag">AN vs. AG</span><span class="item-q">Welche 4 Dinge will ein Arbeitgeber?</span><span class="reveal-hint">Tippen für Antwort</span></summary>
+    <div class="answer-box">Motivierte Mitarbeiter, flexibel auf Aufträge reagieren, Kosten sparen, Zuverlässigkeit & Leistung.</div>
+  </details>
+  <details>
+    <summary><span class="item-tag">Vertrag</span><span class="item-q">Nenne die 4 Pflichten des Auszubildenden.</span><span class="reveal-hint">Tippen für Antwort</span></summary>
+    <div class="answer-box">Lernpflicht, Sorgfaltspflicht, Schweigepflicht, Anweisungen des Ausbilders befolgen.</div>
+  </details>
+  <details>
+    <summary><span class="item-tag">Vertrag</span><span class="item-q">Nenne 4 Pflichten des Ausbilders (= Rechte des Azubis).</span><span class="reveal-hint">Tippen für Antwort</span></summary>
+    <div class="answer-box">Qualifizierte Ausbildung, Materialien bereitstellen, Zeugnis ausstellen, Freistellung für Berufsschule & Prüfungen.</div>
+  </details>
+  <details>
+    <summary><span class="item-tag">Vertrag</span><span class="item-q">Was passiert bei einem Vertragsverstoß?</span><span class="reveal-hint">Tippen für Antwort</span></summary>
+    <div class="answer-box">Zuerst Abmahnung, bei schweren Verstößen Kündigung. Gilt für beide Seiten.</div>
+  </details>
+  <details>
+    <summary><span class="item-tag">Duale Ausbildung</span><span class="item-q">Was lernt man im Betrieb, was in der Berufsschule?</span><span class="reveal-hint">Tippen für Antwort</span></summary>
+    <div class="answer-box">Betrieb = Praxis, Berufsalltag, Bezahlung. Berufsschule = Theorie, Fachwissen, Prüfungen.</div>
+  </details>
+  <details>
+    <summary><span class="item-tag">Duale Ausbildung</span><span class="item-q">Wie viele Jugendliche machen eine duale Ausbildung?</span><span class="reveal-hint">Tippen für Antwort</span></summary>
+    <div class="answer-box">Rund zwei Drittel.</div>
+  </details>
+  <details>
+    <summary><span class="item-tag">Lohnbildung</span><span class="item-q">Nenne 4 Faktoren der Lohnbildung.</span><span class="reveal-hint">Tippen für Antwort</span></summary>
+    <div class="answer-box">Angebot & Nachfrage, Qualifikation, Beruf & Branche, Region (auch: Tarifverträge, Verhandlung).</div>
+  </details>
+  <details>
+    <summary><span class="item-tag">Lohnbildung</span><span class="item-q">Warum verdient Felix (Süden) mehr als Sarah (Osten)?</span><span class="reveal-hint">Tippen für Antwort</span></summary>
+    <div class="answer-box">Wegen der Region — im Süden wird oft mehr gezahlt.</div>
+  </details>
+  <details>
+    <summary><span class="item-tag">Brutto/Netto</span><span class="item-q">Unterschied zwischen Brutto und Netto?</span><span class="reveal-hint">Tippen für Antwort</span></summary>
+    <div class="answer-box">Brutto = Gehalt vor Abzügen. Netto = was tatsächlich aufs Konto kommt.</div>
+  </details>
+  <details>
+    <summary><span class="item-tag">Brutto/Netto</span><span class="item-q">Merksatz für Brutto vor Netto?</span><span class="reveal-hint">Tippen für Antwort</span></summary>
+    <div class="answer-box">B steht im Alphabet vor N → erst der volle Betrag, dann Abzüge, dann Netto.</div>
+  </details>
+  <details>
+    <summary><span class="item-tag">Brutto/Netto</span><span class="item-q">Welche Abzüge hat ein Azubi mit ~1.000 € brutto?</span><span class="reveal-hint">Tippen für Antwort</span></summary>
+    <div class="answer-box">Nur Sozialversicherung (Kranken-, Renten-, Arbeitslosen-, Pflegeversicherung), keine Lohnsteuer.</div>
+  </details>
+  <details>
+    <summary><span class="item-tag">Sozialversicherung</span><span class="item-q">Nenne die 5 Säulen der Sozialversicherung.</span><span class="reveal-hint">Tippen für Antwort</span></summary>
+    <div class="answer-box">Kranken-, Renten-, Arbeitslosen-, Pflege- und Unfallversicherung.</div>
+  </details>
+  <details>
+    <summary><span class="item-tag">Sozialversicherung</span><span class="item-q">Was ist das Solidarprinzip?</span><span class="reveal-hint">Tippen für Antwort</span></summary>
+    <div class="answer-box">„Einer für alle, alle für einen" — alle zahlen ein, jeder bekommt im Notfall Hilfe.</div>
+  </details>
+  <details>
+    <summary><span class="item-tag">Betriebsrat</span><span class="item-q">Ab wie vielen Beschäftigten gibt es einen Betriebsrat? Ab wie vielen Azubis eine JAV?</span><span class="reveal-hint">Tippen für Antwort</span></summary>
+    <div class="answer-box">Betriebsrat ab 5 Beschäftigten. JAV ab 5 Auszubildenden unter 25 Jahren.</div>
+  </details>
+
+  <a href="#top" class="to-top">↑ nach oben</a>
+
+</main>
+
+</body>
+</html>
