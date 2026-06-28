@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arbeitnehmer & Arbeitgeber — Lernakte 9b</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap');
+
+  :root {
+    --paper: #F4EFE4;
+    --paper-dark: #E8E0CC;
+    --paper-card: #FBF7EC;
+    --ink: #1A1A1A;
+    --ink-soft: #4a4438;
+    --stamp-green: #2B5C4A;
+    --stamp-green-light: #3d7a63;
+    --pencil-red: #C0392B;
+    --folder-brown: #8B6F47;
+    --folder-brown-dark: #6b5536;
+    --gold: #C9A227;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Source Serif 4', serif;
+    background-image: repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(0,0,0,0.022) 40px);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== TOPBAR ===== */
+  .topbar {
+    background: var(--folder-brown);
+    color: var(--paper);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+    height: 58px;
+  }
+  .topbar .brand {
+    font-family: 'Courier Prime', monospace;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    opacity: 0.9;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .topbar .brand .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); }
+  .topbar nav { display: flex; gap: 4px; height: 100%; }
+  .topbar nav button {
+    font-family: 'Courier Prime', monospace;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: var(--paper);
+    padding: 0 18px;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    height: 100%;
+  }
+  .topbar nav button:hover { background: rgba(244,239,228,0.12); }
+  .topbar nav button.active { border-bottom-color: var(--gold); background: rgba(244,239,228,0.08); }
+  .topbar nav button:focus-visible { outline: 2px solid var(--paper); outline-offset: -4px; }
+
+  main { max-width: 860px; margin: 0 auto; padding: 36px 20px 100px; }
+
+  .view { display: none; }
+  .view.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from {opacity:0; transform: translateY(6px);} to {opacity:1; transform: translateY(0);} }
+
+  /* ===== FILE HEADER ===== */
+  .file-header {
+    border: 2px solid var(--ink);
+    background: var(--paper-dark);
+    padding: 22px 26px;
+    margin-bottom: 30px;
+    position: relative;
+  }
+  .file-header::before {
+    content: attr(data-akte);
+    position: absolute; top: -11px; left: 20px;
+    background: var(--paper); padding: 0 8px;
+    font-family: 'Courier Prime', monospace; font-size: 11px;
+    letter-spacing: 0.08em; color: var(--folder-brown-dark);
+  }
+  .file-header h1 { margin: 6px 0 6px; font-size: clamp(26px, 5vw, 38px); font-weight: 700; letter-spacing: -0.01em; }
+  .file-header .sub { margin: 0; font-family: 'Courier Prime', monospace; font-size: 13px; color: var(--folder-brown-dark); }
+  .stempel {
+    display: inline-block; border: 3px solid var(--pencil-red); color: var(--pencil-red);
+    font-family: 'Courier Prime', monospace; font-weight: 700; font-size: 12px;
+    letter-spacing: 0.06em; padding: 4px 11px; transform: rotate(-4deg); border-radius: 4px; margin-top: 12px;
+  }
+
+  /* ===== HUB / START ===== */
+  .hub-intro { font-size: 16.5px; line-height: 1.6; color: var(--ink-soft); margin-bottom: 28px; }
+  .stat-row { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 30px; }
+  .stat-box {
+    flex: 1; min-width: 130px; border: 2px solid var(--ink); background: var(--paper-card);
+    padding: 16px 18px; position: relative;
+  }
+  .stat-box .num { font-family: 'Courier Prime', monospace; font-size: 30px; font-weight: 700; color: var(--stamp-green); line-height: 1; }
+  .stat-box .lbl { font-family: 'Courier Prime', monospace; font-size: 11px; letter-spacing: 0.06em; color: var(--folder-brown-dark); margin-top: 6px; text-transform: uppercase; }
+
+  .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 560px) { .mode-grid { grid-template-columns: 1fr; } }
+  .mode-card {
+    border: 2px solid var(--ink); background: var(--paper-card); padding: 22px; cursor: pointer;
+    text-align: left; transition: transform 0.12s, box-shadow 0.12s; font-family: inherit;
+  }
+  .mode-card:hover { transform: translate(-2px,-2px); box-shadow: 4px 4px 0 var(--folder-brown); }
+  .mode-card:focus-visible { outline: 2px solid var(--stamp-green); outline-offset: 2px; }
+  .mode-card .mc-tag { font-family: 'Courier Prime', monospace; font-size: 11px; letter-spacing: 0.1em; color: var(--stamp-green); text-transform: uppercase; font-weight: 700; }
+  .mode-card h3 { margin: 8px 0 6px; font-size: 20px; }
+  .mode-card p { margin: 0; font-size: 14px; color: var(--ink-soft); line-height: 1.45; }
+
+  .reset-link { background: none; border: none; font-family: 'Courier Prime', monospace; font-size: 12px; color: var(--folder-brown-dark); text-decoration: underline; cursor: pointer; margin-top: 24px; padding: 0; }
+
+  /* ===== LERNTEIL ===== */
+  .topic { border-left: 4px solid var(--stamp-green); padding: 4px 0 4px 20px; margin-bottom: 34px; }
+  .topic-tag { font-family: 'Courier Prime', monospace; font-size: 12px; color: var(--stamp-green); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; margin-bottom: 4px; }
+  .topic h2 { margin: 0 0 12px; font-size: 23px; }
+  .topic .body-text { line-height: 1.65; font-size: 16px; margin-bottom: 12px; }
+  .merke { background: #FBF6E9; border: 1px dashed var(--folder-brown); padding: 13px 17px; margin: 13px 0; font-size: 14.5px; position: relative; line-height: 1.5; }
+  .merke::before { content: "MERKE"; font-family: 'Courier Prime', monospace; font-size: 10px; letter-spacing: 0.12em; color: var(--folder-brown-dark); display: block; margin-bottom: 6px; font-weight: 700; }
+  .mnemonic { background: var(--stamp-green); color: var(--paper); padding: 12px 17px; margin: 13px 0; border-radius: 2px; font-size: 14.5px; font-style: italic; line-height: 1.5; }
+  ul.tight { margin: 8px 0; padding-left: 22px; }
+  ul.tight li { margin-bottom: 5px; line-height: 1.5; font-size: 15.5px; }
+  .case-box { background: var(--paper-card); border: 1px solid var(--folder-brown); padding: 14px 17px; margin: 12px 0; font-size: 14.5px; line-height: 1.5; }
+  .case-box .case-q { font-style: italic; color: var(--stamp-green); margin-top: 6px; }
+  table.lohn { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 13px 0; font-family: 'Courier Prime', monospace; }
+  table.lohn th, table.lohn td { border: 1px solid var(--folder-brown); padding: 7px 10px; text-align: left; }
+  table.lohn th { background: var(--paper-dark); }
+
+  /* ===== QUIZ (MC) ===== */
+  .quiz-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-family: 'Courier Prime', monospace; font-size: 13px; color: var(--folder-brown-dark); }
+  .score-pill { background: var(--stamp-green); color: var(--paper); padding: 4px 12px; border-radius: 14px; font-weight: 700; }
+  .progress-track { height: 6px; background: var(--paper-dark); border: 1px solid var(--folder-brown); border-radius: 3px; overflow: hidden; margin-bottom: 26px; }
+  .progress-fill { height: 100%; background: var(--stamp-green); transition: width 0.35s ease; }
+
+  .q-card { border: 2px solid var(--ink); background: var(--paper-card); padding: 26px; margin-bottom: 18px; }
+  .q-card .q-tag { font-family: 'Courier Prime', monospace; font-size: 11px; letter-spacing: 0.1em; color: var(--stamp-green); text-transform: uppercase; font-weight: 700; }
+  .q-card .q-text { font-size: 20px; font-weight: 600; line-height: 1.4; margin: 10px 0 4px; }
+
+  .answers { display: flex; flex-direction: column; gap: 11px; }
+  .answer {
+    border: 2px solid var(--ink); background: var(--paper); padding: 15px 18px; font-family: inherit;
+    font-size: 16px; text-align: left; cursor: pointer; border-radius: 3px; transition: background 0.12s, transform 0.1s;
+    display: flex; align-items: center; gap: 13px; line-height: 1.4;
+  }
+  .answer:hover:not(:disabled) { background: var(--paper-dark); }
+  .answer:active:not(:disabled) { transform: translateY(1px); }
+  .answer:focus-visible { outline: 2px solid var(--stamp-green); outline-offset: 2px; }
+  .answer .letter { font-family: 'Courier Prime', monospace; font-weight: 700; width: 26px; height: 26px; border: 1.5px solid var(--folder-brown); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 13px; }
+  .answer.correct { background: var(--stamp-green); color: var(--paper); border-color: var(--stamp-green); }
+  .answer.correct .letter { border-color: var(--paper); }
+  .answer.wrong { background: var(--pencil-red); color: var(--paper); border-color: var(--pencil-red); }
+  .answer.wrong .letter { border-color: var(--paper); }
+  .answer.dimmed { opacity: 0.5; }
+  .answer:disabled { cursor: default; }
+
+  .explain { border-left: 4px solid var(--gold); background: #FBF6E9; padding: 14px 17px; margin-top: 16px; font-size: 15px; line-height: 1.55; display: none; }
+  .explain.show { display: block; animation: fadeIn 0.25s ease; }
+  .explain .ex-label { font-family: 'Courier Prime', monospace; font-size: 10px; letter-spacing: 0.1em; color: var(--folder-brown-dark); font-weight: 700; display: block; margin-bottom: 5px; }
+
+  .next-btn { width: 100%; margin-top: 16px; font-family: 'Courier Prime', monospace; font-size: 14px; letter-spacing: 0.04em; padding: 14px; border: 2px solid var(--ink); background: var(--stamp-green); color: var(--paper); cursor: pointer; border-radius: 3px; display: none; transition: background 0.15s; }
+  .next-btn.show { display: block; }
+  .next-btn:hover { background: var(--stamp-green-light); }
+  .next-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+  /* ===== RESULT ===== */
+  .result-screen { border: 2px solid var(--ink); background: var(--paper-dark); padding: 38px 26px; text-align: center; }
+  .result-screen h2 { margin-top: 0; font-size: 28px; }
+  .big-score { font-family: 'Courier Prime', monospace; font-size: 54px; font-weight: 700; color: var(--stamp-green); line-height: 1; margin: 10px 0; }
+  .result-grade { display: inline-block; border: 3px solid var(--stamp-green); color: var(--stamp-green); font-family: 'Courier Prime', monospace; font-weight: 700; padding: 8px 18px; transform: rotate(-3deg); margin: 8px 0 18px; border-radius: 4px; font-size: 15px; }
+  .result-msg { font-size: 16px; color: var(--ink-soft); margin-bottom: 24px; line-height: 1.5; }
+  .result-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .result-actions button { font-family: 'Courier Prime', monospace; font-size: 13px; padding: 12px 20px; border: 2px solid var(--ink); background: var(--paper); cursor: pointer; border-radius: 3px; transition: background 0.15s; }
+  .result-actions button:hover { background: var(--paper-card); }
+  .result-actions button.primary { background: var(--stamp-green); color: var(--paper); border-color: var(--stamp-green); }
+
+  /* ===== KARTEIKARTEN ===== */
+  .deck-select { display: flex; gap: 7px; flex-wrap: wrap; justify-content: center; margin-bottom: 24px; }
+  .deck-select button { font-family: 'Courier Prime', monospace; font-size: 12px; padding: 7px 13px; border: 1px solid var(--folder-brown); background: var(--paper); border-radius: 14px; cursor: pointer; transition: background 0.12s; }
+  .deck-select button:hover { background: var(--paper-dark); }
+  .deck-select button.active { background: var(--folder-brown); color: var(--paper); }
+  .card-scene { perspective: 1400px; width: 100%; max-width: 560px; height: 320px; margin: 0 auto 22px; }
+  .flashcard { position: relative; width: 100%; height: 100%; cursor: pointer; transform-style: preserve-3d; transition: transform 0.55s cubic-bezier(.4,.2,.2,1); }
+  .flashcard.flipped { transform: rotateY(180deg); }
+  .fc-face { position: absolute; inset: 0; backface-visibility: hidden; border: 2px solid var(--ink); border-radius: 6px; background: var(--paper-card); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px; box-shadow: 4px 6px 0 rgba(0,0,0,0.13); }
+  .fc-face::before, .fc-face::after { content: ""; position: absolute; top: 14px; width: 14px; height: 14px; border-radius: 50%; background: var(--paper); box-shadow: inset 0 0 0 1.5px var(--folder-brown); }
+  .fc-face::before { left: 14px; } .fc-face::after { right: 14px; }
+  .fc-front .tag { font-family: 'Courier Prime', monospace; font-size: 11px; letter-spacing: 0.1em; color: var(--stamp-green); text-transform: uppercase; margin-bottom: 14px; font-weight: 700; }
+  .fc-front .q-text { font-size: 19px; line-height: 1.4; font-weight: 600; }
+  .fc-back { transform: rotateY(180deg); background: var(--stamp-green); color: var(--paper); }
+  .fc-back .a-text { font-size: 16px; line-height: 1.55; }
+  .fc-hint { font-family: 'Courier Prime', monospace; font-size: 11px; opacity: 0.6; margin-top: 18px; letter-spacing: 0.05em; }
+  .fc-controls { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+  .fc-controls button { font-family: 'Courier Prime', monospace; font-size: 13px; padding: 11px 20px; border: 2px solid var(--ink); background: var(--paper); cursor: pointer; border-radius: 3px; transition: background 0.15s; }
+  .btn-known { border-color: var(--stamp-green); color: var(--stamp-green); }
+  .btn-known:hover { background: var(--stamp-green); color: var(--paper); }
+  .btn-unsure { border-color: var(--pencil-red); color: var(--pencil-red); }
+  .btn-unsure:hover { background: var(--pencil-red); color: var(--paper); }
+
+  @media (max-width: 560px) { .card-scene { height: 360px; } .topbar nav button { padding: 0 12px; } .topbar .brand span { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .flashcard, .view.active, .explain, .mode-card:hover { transition: none; animation: none; } }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="dot"></span><span>AKTE 9b · WBS</span></div>
+  <nav>
+    <button data-view="hub" class="active">Start</button>
+    <button data-view="lern">Lernteil</button>
+    <button data-view="quiz">Quiz</button>
+    <button data-view="cards">Karten</button>
+  </nav>
+</div>
+
+<main>
+
+  <!-- ============ HUB ============ -->
+  <section id="view-hub" class="view active">
+    <div class="file-header" data-akte="AKTE Nr. 9b–WBS–02">
+      <h1>Arbeitnehmer & Arbeitgeber</h1>
+      <p class="sub">Klassenarbeit Nr. 2 — Klasse 9b — WBS</p>
+      <div class="stempel">PRÜFUNGSVORBEREITUNG</div>
+    </div>
+
+    <p class="hub-intro">Alles aus deinem Arbeitsheft an einem Ort. Lies zuerst den Lernteil, teste dich im Quiz und festige die kniffligen Sachen mit den Karteikarten. Dein Fortschritt wird automatisch gespeichert.</p>
+
+    <div class="stat-row">
+      <div class="stat-box"><div class="num" id="stat-quiz">0%</div><div class="lbl">Quiz-Bestleistung</div></div>
+      <div class="stat-box"><div class="num" id="stat-cards">0</div><div class="lbl">Karten gemeistert</div></div>
+      <div class="stat-box"><div class="num">7</div><div class="lbl">Themen</div></div>
+    </div>
+
+    <div class="mode-grid">
+      <button class="mode-card" data-goto="lern">
+        <div class="mc-tag">Schritt 1</div>
+        <h3>Lernteil lesen</h3>
+        <p>Alle 7 Themen kompakt erklärt — mit Merksätzen und Fallbeispielen aus dem Heft.</p>
+      </button>
+      <button class="mode-card" data-goto="quiz">
+        <div class="mc-tag">Schritt 2</div>
+        <h3>Quiz starten</h3>
+        <p>15 Multiple-Choice-Fragen mit Punkten und sofortiger Erklärung. Note am Ende.</p>
+      </button>
+      <button class="mode-card" data-goto="cards">
+        <div class="mc-tag">Schritt 3</div>
+        <h3>Karteikarten</h3>
+        <p>28 Karten zum Umdrehen. Markiere, was sitzt — der Rest kommt in den Übungsstapel.</p>
+      </button>
+      <button class="mode-card" data-goto="quiz" id="weak-btn" style="display:none;">
+        <div class="mc-tag">Empfohlen</div>
+        <h3>Schwachstellen üben</h3>
+        <p id="weak-text">Wiederhole gezielt die Fragen, die du zuletzt falsch hattest.</p>
+      </button>
+    </div>
+
+    <button class="reset-link" id="reset-progress">Fortschritt zurücksetzen</button>
+  </section>
+
+  <!-- ============ LERNTEIL ============ -->
+  <section id="view-lern" class="view">
+    <div class="file-header" data-akte="LERNTEIL">
+      <h1 style="font-size:28px;">Lernteil</h1>
+      <p class="sub">7 Themen — alles aus deinem Heft</p>
+    </div>
+
+    <div class="topic">
+      <div class="topic-tag">01 — Grundlagen</div>
+      <h2>Arbeitnehmer vs. Arbeitgeber</h2>
+      <p class="body-text">In einem Arbeitsverhältnis treffen zwei Seiten aufeinander: Arbeitnehmer (AN) und Arbeitgeber (AG). Beide haben eigene Interessen — die nicht immer gleich sind. Genau dort entstehen oft Konflikte.</p>
+      <ul class="tight">
+        <li><strong>Arbeitnehmer will:</strong> faire Bezahlung · pünktlichen Feierabend · Sicherheit im Job · Mitreden bei Entscheidungen</li>
+        <li><strong>Arbeitgeber will:</strong> motivierte Mitarbeiter · flexibel auf Aufträge reagieren · Kosten sparen · Zuverlässigkeit & Leistung</li>
+      </ul>
+      <div class="merke">Konflikte entstehen an den Gegensätzen: faire Bezahlung ↔ Kosten sparen, pünktlicher Feierabend ↔ Flexibilität. Trotzdem müssen beide zusammenarbeiten — deshalb ist gegenseitiges Zuhören wichtig.</div>
+    </div>
+
+    <div class="topic">
+      <div class="topic-tag">02 — Vertrag</div>
+      <h2>Pflichten & Rechte von Azubis</h2>
+      <p class="body-text">Der Ausbildungsvertrag regelt genau, was erlaubt ist, was man bekommt und woran man sich halten muss. Wer unterschreibt, übernimmt Verantwortung.</p>
+      <ul class="tight">
+        <li><strong>Pflichten des Azubis:</strong> Lernpflicht (Ausbildungsziel erreichen) · Sorgfaltspflicht (Werkzeug ordentlich behandeln) · Schweigepflicht (keine Betriebsgeheimnisse weitergeben) · Anweisungen befolgen</li>
+        <li><strong>Pflichten des Ausbilders</strong> (= Rechte des Azubis): qualifizierte Ausbildung · Materialien bereitstellen · Zeugnis ausstellen · Freistellung für Berufsschule & Prüfungen</li>
+      </ul>
+      <div class="merke">Wer sich nicht an den Vertrag hält: zuerst <strong>Abmahnung</strong>, bei schweren Verstößen <strong>Kündigung</strong>. Das gilt für beide Seiten — auch der Azubi kann sich beschweren oder selbst kündigen. Kündigung in der Probezeit: 2 Wochen Frist.</div>
+    </div>
+
+    <div class="topic">
+      <div class="topic-tag">03 — System</div>
+      <h2>Die duale Ausbildung</h2>
+      <p class="body-text">„Dual" heißt zweifach — die Ausbildung findet an zwei Orten gleichzeitig statt. So werden Wissen und Können verbunden. Das System ist so erfolgreich, dass andere Länder es nachmachen.</p>
+      <ul class="tight">
+        <li><strong>Betrieb:</strong> Praxis · echter Berufsalltag · Umgang mit Kunden/Geräten · Bezahlung</li>
+        <li><strong>Berufsschule:</strong> Theorie · Fachwissen & Allgemeinbildung · Prüfungen · Recht/Wirtschaft/Deutsch</li>
+      </ul>
+      <div class="merke">Rund <strong>2/3 aller Jugendlichen</strong> machen nach der Schule eine duale Ausbildung. Betrieb und Schule ergänzen sich: die Schule bereitet vor (Vorbereitung), im Betrieb wird es angewendet (Anwendung).</div>
+    </div>
+
+    <div class="topic">
+      <div class="topic-tag">04 — Lohn</div>
+      <h2>Lohnbildung und Arbeitsmarkt</h2>
+      <p class="body-text">Der Lohn ist keine Zahl, die sich der Chef einfach ausdenkt. Er entsteht aus mehreren Faktoren:</p>
+      <ul class="tight">
+        <li><strong>Angebot & Nachfrage:</strong> viele Bewerber → niedriger Lohn; knappe Fachkräfte → hoher Lohn</li>
+        <li><strong>Qualifikation:</strong> gute Ausbildung → oft mehr Geld</li>
+        <li><strong>Beruf & Branche:</strong> Technik zahlt meist mehr als Verkauf</li>
+        <li><strong>Region:</strong> Süddeutschland oft mehr als Ostdeutschland</li>
+        <li><strong>Tarifverträge:</strong> feste Löhne bei tarifgebundenen Betrieben</li>
+        <li><strong>Verhandlung</strong> mit dem Arbeitgeber</li>
+      </ul>
+      <div class="case-box">
+        <strong>Fallbeispiel Lea & Max:</strong> Beide haben 3 Jahre Ausbildung, arbeiten 40 Std/Woche. Lea (Köchin) verdient ca. 2.200 €, Max (Fachinformatiker) ca. 3.800 €.
+        <div class="case-q">→ Max verdient mehr wegen Beruf & Branche (Technik/IT) und der hohen Nachfrage nach Fachinformatikern.</div>
+      </div>
+      <div class="case-box">
+        <strong>Fallbeispiel Felix & Sarah:</strong> Beide Mechatroniker. Felix (Süden) 3.000 €, Sarah (Osten) 2.400 €.
+        <div class="case-q">→ Felix verdient mehr wegen der Region — im Süden wird oft mehr gezahlt.</div>
+      </div>
+    </div>
+
+    <div class="topic">
+      <div class="topic-tag">05 — Geld</div>
+      <h2>Brutto und Netto</h2>
+      <p class="body-text">Wer arbeitet, bekommt Lohn — aber auf dem Konto landet weniger, als im Vertrag steht. Warum? Weil vom Bruttolohn automatisch Beträge abgezogen werden.</p>
+      <ul class="tight">
+        <li><strong>Brutto</strong> = das komplette Gehalt vor allen Abzügen (steht im Vertrag)</li>
+        <li><strong>Abzüge</strong> = Sozialversicherung + ggf. Steuern</li>
+        <li><strong>Netto</strong> = das Geld, das tatsächlich aufs Konto kommt</li>
+      </ul>
+      <div class="mnemonic">Merksatz: „B wie Brutto steht im Alphabet vor N wie Netto" → erst der volle Betrag, dann die Abzüge, am Ende bleibt Netto übrig. ODER: Brutto = brutal viel, Netto = net mehr so viel.</div>
+      <table class="lohn">
+        <tr><th>Abzug</th><th>Satz (AN)</th><th>bei 1.000 €</th></tr>
+        <tr><td>Krankenversicherung</td><td>8,9 %</td><td>89 €</td></tr>
+        <tr><td>Rentenversicherung</td><td>9,3 %</td><td>93 €</td></tr>
+        <tr><td>Arbeitslosenversicherung</td><td>1,3 %</td><td>13 €</td></tr>
+        <tr><td>Pflegeversicherung</td><td>1,7 %</td><td>17 €</td></tr>
+        <tr><td>Lohnsteuer (Azubi)</td><td>0 %</td><td>0 €</td></tr>
+      </table>
+      <div class="merke">Azubis mit ca. 1.000 € brutto zahlen <strong>keine Lohnsteuer</strong> (Grundfreibetrag 12.240 €/Jahr) — nur Sozialversicherung (~212 € → netto ca. 788 €). Der Arbeitgeber zahlt denselben Anteil nochmal extra dazu, nicht vom Azubi-Lohn abgezogen.</div>
+    </div>
+
+    <div class="topic">
+      <div class="topic-tag">06 — Schutz</div>
+      <h2>Sozialversicherung</h2>
+      <p class="body-text">Die Abzüge fließen in die Sozialversicherung. Sie schützt uns, wenn wir krank werden, einen Unfall haben, arbeitslos werden oder in Rente gehen. Fünf Säulen:</p>
+      <ul class="tight">
+        <li><strong>Krankenversicherung</strong> — bei Krankheit & Arztkosten</li>
+        <li><strong>Rentenversicherung</strong> — Geld im Alter</li>
+        <li><strong>Arbeitslosenversicherung</strong> — Hilfe bei Jobverlust</li>
+        <li><strong>Pflegeversicherung</strong> — bei Pflegebedürftigkeit</li>
+        <li><strong>Unfallversicherung</strong> — bei Arbeitsunfällen/Berufskrankheit</li>
+      </ul>
+      <div class="merke"><strong>Solidarprinzip:</strong> „Einer für alle — alle für einen." AN und AG zahlen je die Hälfte. Auch junge, gesunde Menschen zahlen ein — würden nur Kranke/Alte einzahlen, würde das System zusammenbrechen. Heute hilfst du anderen, morgen helfen andere dir.</div>
+    </div>
+
+    <div class="topic">
+      <div class="topic-tag">07 — Mitbestimmung</div>
+      <h2>Betriebsrat & JAV</h2>
+      <p class="body-text">Auch Beschäftigte dürfen mitreden — über den Betriebsrat. Er wird von den Mitarbeitenden gewählt und vertritt ihre Interessen gegenüber dem Arbeitgeber.</p>
+      <ul class="tight">
+        <li><strong>Betriebsrat:</strong> wird ab <strong>5 Beschäftigten</strong> gewählt · vertritt die Belegschaft · bestimmt mit bei Arbeitszeit, Pausen, Kündigungen · ist gesetzlich geschützt</li>
+        <li><strong>JAV</strong> (Jugend- & Auszubildendenvertretung): ab <strong>5 Azubis unter 25</strong> · kümmert sich um Azubi-Anliegen · arbeitet mit dem Betriebsrat zusammen</li>
+      </ul>
+      <div class="merke">Auch Azubis dürfen wählen und gewählt werden (z. B. in die JAV). Mitbestimmung sorgt dafür, dass Arbeit fair bleibt und niemand übergangen wird.</div>
+    </div>
+
+    <div style="text-align:center; margin-top:36px;">
+      <button class="next-btn show" style="max-width:300px; margin:0 auto;" data-goto="quiz">Jetzt im Quiz testen →</button>
+    </div>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section id="view-quiz" class="view">
+    <div id="quiz-play">
+      <div class="quiz-top">
+        <span id="q-counter">Frage 1 / 15</span>
+        <span class="score-pill" id="q-score">0 Punkte</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="q-progress" style="width:0%"></div></div>
+
+      <div class="q-card">
+        <div class="q-tag" id="q-tag">Thema</div>
+        <div class="q-text" id="q-text">Frage lädt…</div>
+      </div>
+
+      <div class="answers" id="answers"></div>
+
+      <div class="explain" id="explain">
+        <span class="ex-label">ERKLÄRUNG</span>
+        <span id="explain-text"></span>
+      </div>
+
+      <button class="next-btn" id="next-btn">Nächste Frage →</button>
+    </div>
+
+    <div id="quiz-result" style="display:none;">
+      <div class="result-screen">
+        <h2>Quiz abgeschlossen</h2>
+        <div class="big-score" id="final-score">0 / 15</div>
+        <div class="result-grade" id="final-grade">NOTE</div>
+        <p class="result-msg" id="final-msg"></p>
+        <div class="result-actions">
+          <button class="primary" id="retry-all">Nochmal alle Fragen</button>
+          <button id="retry-wrong" style="display:none;">Nur Falsche üben</button>
+          <button data-goto="cards">Zu den Karten →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ KARTEIKARTEN ============ -->
+  <section id="view-cards" class="view">
+    <div class="file-header" data-akte="KARTEIKARTEN">
+      <h1 style="font-size:28px;">Karteikarten</h1>
+      <p class="sub">Klick auf die Karte zum Umdrehen</p>
+    </div>
+
+    <div class="deck-select" id="deck-select"></div>
+
+    <div id="cards-active">
+      <div class="quiz-top"><span id="fc-meta">Karte 1 / 10</span><span class="score-pill" id="fc-known">0 gewusst</span></div>
+      <div class="progress-track"><div class="progress-fill" id="fc-progress" style="width:0%"></div></div>
+
+      <div class="card-scene">
+        <div class="flashcard" id="flashcard" tabindex="0" role="button" aria-label="Karte umdrehen">
+          <div class="fc-face fc-front">
+            <div class="tag" id="fc-tag">Thema</div>
+            <div class="q-text" id="fc-question">Frage</div>
+            <div class="fc-hint">Klicken zum Umdrehen</div>
+          </div>
+          <div class="fc-face fc-back"><div class="a-text" id="fc-answer">Antwort</div></div>
+        </div>
+      </div>
+
+      <div class="fc-controls">
+        <button class="btn-unsure" id="fc-unsure">✗ Nochmal üben</button>
+        <button class="btn-known" id="fc-knownbtn">✓ Weiß ich</button>
+      </div>
+    </div>
+
+    <div id="cards-result" style="display:none;">
+      <div class="result-screen">
+        <h2>Stapel geschafft!</h2>
+        <div class="result-grade" id="fc-result-stamp">9 / 10 GEWUSST</div>
+        <p class="result-msg" id="fc-result-text"></p>
+        <div class="result-actions">
+          <button class="primary" id="fc-restart-all">Neu mischen</button>
+          <button id="fc-restart-unsure" style="display:none;">Unsichere wiederholen</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+// ======================= DATEN =======================
+const quizQuestions = [
+  {tag:"AN vs. AG", q:"Was wünscht sich ein Arbeitnehmer NICHT laut Heft?", opts:["Faire Bezahlung","Möglichst wenig arbeiten","Sicherheit im Job","Mitreden bei Entscheidungen"], correct:1, ex:"Der AN wünscht sich faire Bezahlung, Feierabend, Sicherheit und Mitsprache — „wenig arbeiten" gehört nicht dazu."},
+  {tag:"AN vs. AG", q:"Welches Ziel hat typischerweise der Arbeitgeber?", opts:["Pünktlicher Feierabend","Sicherheit im Job","Kosten sparen","Mitreden dürfen"], correct:2, ex:"Der AG denkt wirtschaftlich: motivierte Mitarbeiter, Flexibilität, Kosten sparen, Zuverlässigkeit & Leistung."},
+  {tag:"AN vs. AG", q:"Warum sollten beide Seiten sich gegenseitig zuhören?", opts:["Damit der Chef immer recht hat","Um Konflikte früh zu erkennen und Lösungen zu finden","Weil das Gesetz es vorschreibt","Damit niemand kündigt"], correct:1, ex:"Unterschiedliche Interessen führen zu Konflikten — Zuhören hilft, sie früh zu erkennen und gemeinsam zu lösen."},
+
+  {tag:"Vertrag", q:"Welche der folgenden ist KEINE Pflicht des Auszubildenden?", opts:["Lernpflicht","Schweigepflicht","Sorgfaltspflicht","Zeugnis ausstellen"], correct:3, ex:"Das Zeugnis ausstellen ist Pflicht des Ausbilders. Azubi-Pflichten: Lern-, Sorgfalts-, Schweigepflicht + Anweisungen befolgen."},
+  {tag:"Vertrag", q:"Was ist eine Pflicht des Ausbilders?", opts:["Betriebsgeheimnisse wahren","Freistellung für die Berufsschule","Werkzeug ordentlich behandeln","Anweisungen befolgen"], correct:1, ex:"Der Ausbilder muss u.a. für Berufsschule/Prüfungen freistellen, Material stellen und ein Zeugnis ausstellen."},
+  {tag:"Vertrag", q:"Was passiert zuerst, wenn man sich nicht an den Vertrag hält?", opts:["Sofortige Kündigung","Eine Abmahnung","Eine Geldstrafe","Nichts"], correct:1, ex:"Zuerst gibt es eine Abmahnung. Erst bei schweren Verstößen kann gekündigt werden."},
+
+  {tag:"Duale Ausb.", q:"Was bedeutet „dual" bei der dualen Ausbildung?", opts:["Doppelt so lang","Zweifach — an zwei Orten","Zwei Berufe gleichzeitig","Doppelter Lohn"], correct:1, ex:"„Dual" heißt zweifach: Die Ausbildung findet an zwei Orten statt — Betrieb und Berufsschule."},
+  {tag:"Duale Ausb.", q:"Was gehört zum Lernort Betrieb?", opts:["Theorie und Prüfungen","Allgemeinbildung","Praxis und Bezahlung","Recht und Wirtschaft"], correct:2, ex:"Im Betrieb: Praxis, echter Berufsalltag, Umgang mit Kunden/Geräten und Bezahlung. Theorie kommt in der Berufsschule."},
+  {tag:"Duale Ausb.", q:"Wie viele Jugendliche machen ca. eine duale Ausbildung?", opts:["Ein Drittel","Die Hälfte","Zwei Drittel","Alle"], correct:2, ex:"Rund zwei Drittel aller Jugendlichen machen nach der Schule eine duale Ausbildung."},
+
+  {tag:"Lohnbildung", q:"Was passiert mit dem Lohn, wenn Fachkräfte knapp sind?", opts:["Er sinkt","Er steigt","Er bleibt gleich","Er fällt weg"], correct:1, ex:"Angebot & Nachfrage: Sind Fachkräfte knapp, steigt der Lohn. Viele Bewerber → niedrigerer Lohn."},
+  {tag:"Lohnbildung", q:"Warum verdient Max (Fachinformatiker) mehr als Lea (Köchin)?", opts:["Er arbeitet länger","Wegen Beruf & Branche","Er ist älter","Wegen der Region"], correct:1, ex:"Beide haben gleich lange Ausbildung und Arbeitszeit. Der Unterschied: Beruf & Branche — Technik/IT zahlt meist mehr."},
+  {tag:"Lohnbildung", q:"Felix verdient im Süden mehr als Sarah im Osten. Warum?", opts:["Wegen der Region","Bessere Noten","Längere Ausbildung","Mehr Stunden"], correct:0, ex:"Gleicher Beruf (Mechatroniker), aber die Region entscheidet — in Süddeutschland wird oft mehr gezahlt."},
+
+  {tag:"Brutto/Netto", q:"Was bedeutet Brutto?", opts:["Was aufs Konto kommt","Gehalt vor allen Abzügen","Nur die Steuer","Der Stundenlohn"], correct:1, ex:"Brutto = komplettes Gehalt vor Abzügen (steht im Vertrag). Netto = was nach Abzügen übrig bleibt."},
+  {tag:"Brutto/Netto", q:"Warum zahlt ein Azubi mit 1.000 € brutto keine Lohnsteuer?", opts:["Azubis zahlen nie Steuern","Er bleibt unter dem Grundfreibetrag","Der Chef übernimmt sie","Das ist ein Fehler"], correct:1, ex:"Mit ~1.000 € brutto bleibt man unter dem jährlichen Grundfreibetrag von 12.240 € — daher keine Lohnsteuer."},
+  {tag:"Sozialvers.", q:"Wie heißt das Prinzip der Sozialversicherung?", opts:["Jeder für sich","Solidarprinzip","Sparprinzip","Chefprinzip"], correct:1, ex:"Solidarprinzip: „Einer für alle, alle für einen." Alle zahlen ein, jeder kann im Notfall Hilfe bekommen."},
+];
+
+const flashcards = [
+  {deck:"an_ag", tag:"AN vs. AG", q:"Welche 4 Dinge wünscht sich ein Arbeitnehmer?", a:"Faire Bezahlung, pünktlicher Feierabend, Sicherheit im Job, Mitreden bei Entscheidungen."},
+  {deck:"an_ag", tag:"AN vs. AG", q:"Welche 4 Dinge will ein Arbeitgeber?", a:"Motivierte Mitarbeiter, flexibel auf Aufträge reagieren, Kosten sparen, Zuverlässigkeit & Leistung."},
+  {deck:"an_ag", tag:"AN vs. AG", q:"Warum sollen beide Seiten sich zuhören?", a:"Damit Konflikte früh erkannt werden und man gemeinsam Lösungen findet."},
+  {deck:"vertrag", tag:"Vertrag", q:"Nenne die 4 Pflichten des Auszubildenden.", a:"Lernpflicht, Sorgfaltspflicht, Schweigepflicht, Anweisungen des Ausbilders befolgen."},
+  {deck:"vertrag", tag:"Vertrag", q:"Nenne 4 Pflichten des Ausbilders (= Rechte des Azubis).", a:"Qualifizierte Ausbildung, Materialien bereitstellen, Zeugnis ausstellen, Freistellung für Berufsschule & Prüfungen."},
+  {deck:"vertrag", tag:"Vertrag", q:"Was passiert bei Vertragsverstoß?", a:"Zuerst Abmahnung, bei schweren Verstößen Kündigung. Gilt für beide Seiten."},
+  {deck:"vertrag", tag:"Vertrag", q:"Kündigungsfrist in der Probezeit?", a:"2 Wochen."},
+  {deck:"dual", tag:"Duale Ausb.", q:"Was bedeutet „dual"?", a:"Zweifach — die Ausbildung findet an zwei Orten statt: Betrieb und Berufsschule."},
+  {deck:"dual", tag:"Duale Ausb.", q:"Was lernt man im Betrieb?", a:"Praxis: echter Berufsalltag, Umgang mit Kunden/Geräten, Bezahlung."},
+  {deck:"dual", tag:"Duale Ausb.", q:"Was lernt man in der Berufsschule?", a:"Theorie: Fachwissen, Allgemeinbildung, Prüfungen, Recht/Wirtschaft/Deutsch."},
+  {deck:"dual", tag:"Duale Ausb.", q:"Wie viele Jugendliche machen eine duale Ausbildung?", a:"Rund zwei Drittel."},
+  {deck:"lohn", tag:"Lohnbildung", q:"Nenne 4 Faktoren der Lohnbildung.", a:"Angebot & Nachfrage, Qualifikation, Beruf & Branche, Region (auch: Tarifverträge, Verhandlung)."},
+  {deck:"lohn", tag:"Lohnbildung", q:"Knappe Fachkräfte — was passiert mit dem Lohn?", a:"Der Lohn steigt."},
+  {deck:"lohn", tag:"Lohnbildung", q:"Warum verdient Felix (Süden) mehr als Sarah (Osten)?", a:"Wegen der Region — im Süden wird oft mehr gezahlt."},
+  {deck:"lohn", tag:"Lohnbildung", q:"Warum verdient Max (IT) mehr als Lea (Köchin)?", a:"Wegen Beruf & Branche — Technik/IT zahlt meist mehr."},
+  {deck:"brutto", tag:"Brutto/Netto", q:"Unterschied Brutto und Netto?", a:"Brutto = Gehalt vor Abzügen. Netto = was tatsächlich aufs Konto kommt."},
+  {deck:"brutto", tag:"Brutto/Netto", q:"Merksatz für Brutto vor Netto?", a:"B steht im Alphabet vor N → erst der volle Betrag, dann Abzüge, dann Netto."},
+  {deck:"brutto", tag:"Brutto/Netto", q:"Welche Abzüge hat ein Azubi mit ~1.000 € brutto?", a:"Nur Sozialversicherung (Kranken-, Renten-, Arbeitslosen-, Pflegeversicherung), keine Lohnsteuer."},
+  {deck:"brutto", tag:"Brutto/Netto", q:"Warum keine Lohnsteuer beim Azubi?", a:"Er bleibt unter dem Grundfreibetrag von 12.240 €/Jahr."},
+  {deck:"brutto", tag:"Brutto/Netto", q:"Zahlt der Arbeitgeber auch Sozialabgaben?", a:"Ja, denselben Anteil nochmal extra — nicht vom Azubi-Lohn abgezogen."},
+  {deck:"sozial", tag:"Sozialvers.", q:"Nenne die 5 Säulen der Sozialversicherung.", a:"Kranken-, Renten-, Arbeitslosen-, Pflege- und Unfallversicherung."},
+  {deck:"sozial", tag:"Sozialvers.", q:"Wer zahlt die Beiträge?", a:"Arbeitnehmer und Arbeitgeber je zur Hälfte."},
+  {deck:"sozial", tag:"Sozialvers.", q:"Was ist das Solidarprinzip?", a:"„Einer für alle, alle für einen" — alle zahlen ein, jeder bekommt im Notfall Hilfe."},
+  {deck:"sozial", tag:"Sozialvers.", q:"Warum zahlen auch junge Gesunde ein?", a:"Sonst würde das System zusammenbrechen — heute hilfst du anderen, morgen helfen andere dir."},
+  {deck:"betrieb", tag:"Betriebsrat", q:"Ab wie vielen Beschäftigten gibt es einen Betriebsrat?", a:"Ab 5 Beschäftigten."},
+  {deck:"betrieb", tag:"Betriebsrat", q:"Was ist die JAV?", a:"Jugend- und Auszubildendenvertretung — kümmert sich um Azubi-Anliegen, arbeitet mit dem Betriebsrat."},
+  {deck:"betrieb", tag:"Betriebsrat", q:"Ab wie vielen Azubis unter 25 gibt es eine JAV?", a:"Ab 5 Auszubildenden unter 25 Jahren."},
+  {deck:"betrieb", tag:"Betriebsrat", q:"Worüber bestimmt der Betriebsrat mit?", a:"Z. B. Arbeitszeit, Pausenregelung, Kündigungen."},
+];
+
+const decks = { alle:"Alle", an_ag:"AN/AG", vertrag:"Vertrag", dual:"Duale Ausb.", lohn:"Lohn", brutto:"Brutto/Netto", sozial:"Sozialvers.", betrieb:"Betriebsrat" };
+
+// ======================= STATE / SPEICHER =======================
+const STORE_KEY = "lernakte9b_v2";
+let progress = { bestQuiz: 0, cardsMastered: 0, lastWrong: [] };
+try { const s = localStorage.getItem(STORE_KEY); if (s) progress = Object.assign(progress, JSON.parse(s)); } catch(e){}
+function save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(progress)); } catch(e){} }
+
+function shuffle(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+
+// ======================= NAVIGATION =======================
+function showView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  document.querySelectorAll('.topbar nav button').forEach(b=>b.classList.toggle('active', b.dataset.view===name));
+  window.scrollTo({top:0, behavior:'smooth'});
+  if(name==='hub') refreshHub();
+  if(name==='quiz') startQuiz();
+  if(name==='cards') startCards();
+}
+document.querySelectorAll('[data-view]').forEach(b=> b.addEventListener('click', ()=>showView(b.dataset.view)));
+document.querySelectorAll('[data-goto]').forEach(b=> b.addEventListener('click', ()=>showView(b.dataset.goto)));
+
+// ======================= HUB =======================
+function refreshHub(){
+  document.getElementById('stat-quiz').textContent = progress.bestQuiz + "%";
+  document.getElementById('stat-cards').textContent = progress.cardsMastered;
+  const weakBtn = document.getElementById('weak-btn');
+  if(progress.lastWrong && progress.lastWrong.length){
+    weakBtn.style.display = '';
+    document.getElementById('weak-text').textContent = `${progress.lastWrong.length} Frage(n) aus dem letzten Versuch warten auf Wiederholung.`;
+  } else { weakBtn.style.display = 'none'; }
+}
+document.getElementById('reset-progress').addEventListener('click', ()=>{
+  if(confirm('Wirklich allen Fortschritt löschen?')){ progress={bestQuiz:0,cardsMastered:0,lastWrong:[]}; save(); refreshHub(); }
+});
+
+// ======================= QUIZ =======================
+let qQueue=[], qIdx=0, qScore=0, qWrongThisRound=[], qAnswered=false, onlyWrong=false;
+
+function startQuiz(useWrong){
+  onlyWrong = !!useWrong;
+  const pool = useWrong && progress.lastWrong.length
+    ? progress.lastWrong.map(i=>quizQuestions[i]).filter(Boolean)
+    : quizQuestions;
+  qQueue = shuffle(pool.map(q=>quizQuestions.indexOf(q)));
+  qIdx=0; qScore=0; qWrongThisRound=[]; qAnswered=false;
+  document.getElementById('quiz-play').style.display='';
+  document.getElementById('quiz-result').style.display='none';
+  renderQuestion();
+}
+function renderQuestion(){
+  if(qIdx>=qQueue.length){ showQuizResult(); return; }
+  qAnswered=false;
+  const q = quizQuestions[qQueue[qIdx]];
+  document.getElementById('q-counter').textContent = `Frage ${qIdx+1} / ${qQueue.length}`;
+  document.getElementById('q-score').textContent = `${qScore} Punkte`;
+  document.getElementById('q-progress').style.width = `${(qIdx/qQueue.length)*100}%`;
+  document.getElementById('q-tag').textContent = q.tag;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('explain').classList.remove('show');
+  document.getElementById('next-btn').classList.remove('show');
+  const ansBox = document.getElementById('answers');
+  ansBox.innerHTML='';
+  const letters = ['A','B','C','D'];
+  q.opts.forEach((opt,i)=>{
+    const btn = document.createElement('button');
+    btn.className='answer';
+    btn.innerHTML = `<span class="letter">${letters[i]}</span><span>${opt}</span>`;
+    btn.addEventListener('click', ()=>selectAnswer(i, q, btn));
+    ansBox.appendChild(btn);
+  });
+}
+function selectAnswer(i, q, btn){
+  if(qAnswered) return;
+  qAnswered=true;
+  const allBtns = document.querySelectorAll('#answers .answer');
+  allBtns.forEach((b,j)=>{
+    b.disabled=true;
+    if(j===q.correct) b.classList.add('correct');
+    else if(j===i) b.classList.add('wrong');
+    else b.classList.add('dimmed');
+  });
+  if(i===q.correct){ qScore++; }
+  else { qWrongThisRound.push(qQueue[qIdx]); }
+  document.getElementById('q-score').textContent = `${qScore} Punkte`;
+  document.getElementById('explain-text').textContent = q.ex;
+  document.getElementById('explain').classList.add('show');
+  document.getElementById('next-btn').classList.add('show');
+}
+document.getElementById('next-btn').addEventListener('click', ()=>{ qIdx++; renderQuestion(); });
+
+function showQuizResult(){
+  document.getElementById('quiz-play').style.display='none';
+  document.getElementById('quiz-result').style.display='';
+  const total = qQueue.length;
+  const pct = Math.round((qScore/total)*100);
+  document.getElementById('final-score').textContent = `${qScore} / ${total}`;
+  let grade, msg;
+  if(pct>=90){grade="SEHR GUT";msg="Stark! Das sitzt — du bist bereit für die Arbeit.";}
+  else if(pct>=75){grade="GUT";msg="Gut gemacht! Ein paar Stellen noch wiederholen, dann passt's.";}
+  else if(pct>=50){grade="BEFRIEDIGEND";msg="Solide Basis. Geh die falschen Fragen und die Karten nochmal durch.";}
+  else {grade="ÜBEN!";msg="Noch wackelig — lies den Lernteil nochmal und übe die Karten. Du schaffst das.";}
+  document.getElementById('final-grade').textContent = grade;
+  document.getElementById('final-msg').textContent = msg;
+  if(pct>progress.bestQuiz && !onlyWrong){ progress.bestQuiz=pct; }
+  if(qWrongThisRound.length){ progress.lastWrong = [...new Set(qWrongThisRound)]; }
+  else if(!onlyWrong){ progress.lastWrong = []; }
+  save();
+  document.getElementById('retry-wrong').style.display = qWrongThisRound.length ? '' : 'none';
+}
+document.getElementById('retry-all').addEventListener('click', ()=>startQuiz(false));
+document.getElementById('retry-wrong').addEventListener('click', ()=>{
+  progress.lastWrong = [...new Set(qWrongThisRound)]; save(); startQuiz(true);
+});
+
+// ======================= KARTEIKARTEN =======================
+let currentDeck="alle", fcQueue=[], fcIdx=0, fcKnown=0, fcUnsure=[], fcFlipped=false;
+const flashEl = document.getElementById('flashcard');
+
+function buildDeckSelect(){
+  const wrap = document.getElementById('deck-select'); wrap.innerHTML='';
+  Object.entries(decks).forEach(([k,label])=>{
+    const b=document.createElement('button'); b.textContent=label;
+    if(k===currentDeck) b.classList.add('active');
+    b.addEventListener('click', ()=>{ currentDeck=k; startCards(); });
+    wrap.appendChild(b);
+  });
+}
+function startCards(onlyIds){
+  const pool = onlyIds ? flashcards.filter((c,i)=>onlyIds.includes(i)) : flashcards.filter(c=> currentDeck==='alle'||c.deck===currentDeck);
+  fcQueue = shuffle(pool.map(c=>flashcards.indexOf(c)));
+  fcIdx=0; fcKnown=0; fcUnsure=[]; fcFlipped=false;
+  document.getElementById('cards-active').style.display='';
+  document.getElementById('cards-result').style.display='none';
+  buildDeckSelect();
+  renderCard();
+}
+function renderCard(){
+  if(fcIdx>=fcQueue.length){ showCardsResult(); return; }
+  const c = flashcards[fcQueue[fcIdx]];
+  flashEl.classList.remove('flipped'); fcFlipped=false;
+  document.getElementById('fc-tag').textContent=c.tag;
+  document.getElementById('fc-question').textContent=c.q;
+  document.getElementById('fc-answer').textContent=c.a;
+  document.getElementById('fc-meta').textContent=`Karte ${fcIdx+1} / ${fcQueue.length}`;
+  document.getElementById('fc-known').textContent=`${fcKnown} gewusst`;
+  document.getElementById('fc-progress').style.width=`${(fcIdx/fcQueue.length)*100}%`;
+}
+flashEl.addEventListener('click', ()=>{ fcFlipped=!fcFlipped; flashEl.classList.toggle('flipped',fcFlipped); });
+flashEl.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); flashEl.click(); } });
+document.getElementById('fc-knownbtn').addEventListener('click', ()=>{ fcKnown++; fcIdx++; renderCard(); });
+document.getElementById('fc-unsure').addEventListener('click', ()=>{ fcUnsure.push(fcQueue[fcIdx]); fcIdx++; renderCard(); });
+function showCardsResult(){
+  document.getElementById('cards-active').style.display='none';
+  document.getElementById('cards-result').style.display='';
+  const total = fcKnown + fcUnsure.length;
+  document.getElementById('fc-result-stamp').textContent=`${fcKnown} / ${total} GEWUSST`;
+  document.getElementById('fc-result-text').textContent = fcUnsure.length===0 ? "Sauber — kompletter Stapel sitzt!" : `${fcUnsure.length} Karte(n) zum Wiederholen markiert.`;
+  document.getElementById('fc-restart-unsure').style.display = fcUnsure.length ? '' : 'none';
+  if(fcKnown>progress.cardsMastered){ progress.cardsMastered=fcKnown; save(); }
+}
+document.getElementById('fc-restart-all').addEventListener('click', ()=>startCards());
+document.getElementById('fc-restart-unsure').addEventListener('click', ()=>startCards(fcUnsure));
+
+// ======================= INIT =======================
+refreshHub();
+buildDeckSelect();
+</script>
+
+</body>
+</html>
